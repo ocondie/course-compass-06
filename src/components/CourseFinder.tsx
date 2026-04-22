@@ -494,14 +494,14 @@ export function CourseFinder() {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">Course Finder</DialogTitle>
+        <DialogHeader className="sr-only">
+          <DialogTitle>Course Finder</DialogTitle>
           <DialogDescription>
             A few quick questions and we'll point you to the right training.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-2 space-y-2">
+        <div className="mt-1 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
             {moduleLabel}
           </p>
