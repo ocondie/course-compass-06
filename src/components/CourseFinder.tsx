@@ -34,7 +34,7 @@ const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
   { value: "16", label: "16", help: "Moped only — 50cc / 28mph after CBT" },
   { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) after CBT — A1 is the highest full licence available" },
   { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) after CBT — A2 is the highest full licence available" },
-  { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) after CBT — full A licence available via Direct Access" },
+  { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) after CBT — full A licence (any power) is the highest available" },
 ];
 
 // Per-age licence options (16-year-olds can't yet hold a UK driving licence)
@@ -135,7 +135,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "Apply via GOV.UK",
       "Then book a CBT to start riding",
-      "Direct Access route to a full A licence (any power)",
+      "Full A licence route available — any power",
     ],
   },
 
@@ -199,10 +199,10 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "M",
     cta: "cbt",
     title: "You're ready to book your CBT",
-    body: "Your UK provisional covers you for a CBT. At 24+ you can also go straight to a full A licence with no power restrictions.",
+    body: "Your UK provisional covers you for a CBT. At 24+ you can also work towards a full A licence with no power restrictions.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "Direct Access to a full A licence (any power)",
+      "Full A licence route available — any power",
       "Valid for 2 years on a 125cc under L-plates",
     ],
   },
@@ -210,11 +210,11 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "O",
     cta: "cbt",
     title: "You're ready to book your CBT",
-    body: "Your UK car licence acts as your provisional for motorcycles. At 24+ you can take Direct Access to a full A licence — but a CBT is your starting point.",
+    body: "Your UK car licence acts as your provisional for motorcycles. At 24+ you can also work towards a full A licence with no power restrictions — but a CBT is your starting point.",
     bullets: [
       "No separate provisional needed",
       "Ride up to 125cc (11kW) under L-plates",
-      "Direct Access route available — full A, any power",
+      "Full A licence route available — any power",
     ],
   },
 
@@ -256,11 +256,11 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "N",
     cta: "convert",
     title: "Convert your non-UK licence",
-    body: "Convert your non-UK licence first, then take a CBT. At 24+ you can take Direct Access to a full A licence with no restrictions.",
+    body: "Convert your non-UK licence first, then take a CBT. At 24+ you can also work towards a full A licence with no power restrictions.",
     bullets: [
       "Check exchange rules on GOV.UK",
       "Then book a CBT to start riding",
-      "Direct Access route available — full A, any power",
+      "Full A licence route available — any power",
     ],
   },
 };
