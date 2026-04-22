@@ -795,11 +795,11 @@ function ResultPanel({
       </ul>
 
       {aspirations && hasGap && (
-        <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-accent/40 bg-accent/10 p-4">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-accent" />
             <div className="flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-accent">
                 You're aiming higher than today allows
               </p>
               <p className="mt-1 text-sm" style={{ fontFamily: "var(--font-body)" }}>
