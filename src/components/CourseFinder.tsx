@@ -347,7 +347,7 @@ export function CourseFinder() {
         {stage === "licence" && age && (
           <QuestionPanel
             question="What driving licence do you currently hold?"
-            help="We mean a car or motorcycle driving licence (UK or overseas) — pick whichever best describes you today."
+            help="We mean a car driving licence (UK or overseas) — pick whichever best describes you today."
             options={LICENCE_OPTIONS[age].map((o) => ({
               key: o.value,
               label: o.label,
