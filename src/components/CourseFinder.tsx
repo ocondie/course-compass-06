@@ -31,10 +31,10 @@ type Ending = {
 };
 
 const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
-  { value: "16", label: "16", help: "Moped only — 50cc / 28mph after CBT" },
-  { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) after CBT — A1 is the highest full licence available" },
-  { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) after CBT — A2 is the highest full licence available" },
-  { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) after CBT — full A licence (any power) is the highest available" },
+  { value: "16", label: "16", help: "Moped only — 50cc / 28mph on a CBT" },
+  { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) on a CBT — A1 full licence possible after CBT" },
+  { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) on a CBT — A2 full licence possible after CBT" },
+  { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) on a CBT — full A licence (any power) possible after CBT" },
 ];
 
 // Per-age licence options (16-year-olds can't yet hold a UK driving licence)
