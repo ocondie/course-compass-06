@@ -31,10 +31,10 @@ type Ending = {
 };
 
 const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
-  { value: "16", label: "16", help: "Restricted to 50cc / 28mph" },
-  { value: "17-18", label: "17–18", help: "A1 category, up to 125cc (11kW)" },
-  { value: "19-23", label: "19–23", help: "A2 category, up to 35kW" },
-  { value: "24+", label: "24 or older", help: "Full A category, any power" },
+  { value: "16", label: "16", help: "Moped only — 50cc / 28mph after CBT" },
+  { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) after CBT — A1 is the highest full licence available" },
+  { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) after CBT — A2 is the highest full licence available" },
+  { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) after CBT — full A licence available via Direct Access" },
 ];
 
 // Per-age licence options (16-year-olds can't yet hold a UK driving licence)
@@ -334,7 +334,7 @@ export function CourseFinder() {
         {stage === "age" && (
           <QuestionPanel
             question="How old are you?"
-            help="Your age determines which licence categories are available to you."
+            help="Age sets the highest licence you can work towards — you'll still need a CBT (and motorcycle theory for a full A1/A2/A licence) to actually get there."
             options={AGE_OPTIONS.map((o) => ({
               key: o.value,
               label: o.label,
