@@ -4,6 +4,44 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+ * RideTo Type System v2.3 — fonts & scale tokens
+ * Licensed weights only: Rift Regular/Bold, Proxima Nova Regular/Bold.
+ * ============================================================ */
+
+@font-face {
+  font-family: "Rift";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Rift-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Rift";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Rift-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    url("/fonts/ProximaNova-Regular.woff2") format("woff2"),
+    url("/fonts/ProximaNova-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src:
+    url("/fonts/ProximaNova-Bold.woff2") format("woff2"),
+    url("/fonts/ProximaNova-Bold.woff") format("woff");
+}
+
 /*
  * Design system definition.
  *
