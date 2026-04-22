@@ -404,7 +404,7 @@ function QuestionPanel({
             <span className="flex flex-col">
               <span className="text-sm font-medium">{opt.label}</span>
               {opt.help && (
-                <span className="mt-0.5 text-xs text-muted-foreground">
+                <span className="mt-0.5 text-xs font-normal normal-case tracking-normal text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
                   {opt.help}
                 </span>
               )}
