@@ -32,8 +32,8 @@ type Ending = {
 
 const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
   { value: "16", label: "16", help: "Moped only — 50cc / 28mph on a CBT" },
-  { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) on a CBT — A1 full licence possible after CBT" },
-  { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) on a CBT — A2 full licence possible after CBT" },
+  { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) on a CBT — A1 licence possible after CBT" },
+  { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) on a CBT — A2 licence possible after CBT" },
   { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) on a CBT — full A licence (any power) possible after CBT" },
 ];
 
@@ -43,24 +43,24 @@ const LICENCE_OPTIONS: Record<
   { value: Licence; label: string; help?: string }[]
 > = {
   "16": [
-    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
     { value: "non-uk", label: "Non-UK driving licence" },
   ],
   "17-18": [
-    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
     { value: "non-uk", label: "Non-UK driving licence" },
     { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "19-23": [
-    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
     { value: "non-uk", label: "Non-UK driving licence" },
     { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "24+": [
-    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
     { value: "non-uk", label: "Non-UK driving licence" },
     { value: "uk-driving", label: "UK full car driving licence" },
@@ -113,7 +113,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "Apply via GOV.UK",
       "Then book a CBT to ride a 125cc (up to 11kW)",
-      "Full A1 licence available from 17",
+      "A1 licence available from 17",
     ],
   },
   H: {
@@ -124,7 +124,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "Apply via GOV.UK",
       "Then book a CBT to start riding",
-      "A2 full licence available — bikes up to 35kW",
+      "A2 licence available — bikes up to 35kW",
     ],
   },
   L: {
@@ -170,7 +170,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "No separate provisional needed",
       "Ride up to 125cc (11kW) under L-plates",
-      "A1 full licence available — removes L-plates and restrictions",
+      "A1 licence available — removes L-plates and restrictions",
     ],
   },
   I: {
@@ -180,7 +180,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "Your UK provisional covers you for a CBT. After training you can ride a 125cc — and you're eligible for a full A2 licence.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "A2 full licence route available — bikes up to 35kW",
+      "A2 licence route available — bikes up to 35kW",
       "Valid for 2 years on a 125cc under L-plates",
     ],
   },
@@ -188,11 +188,11 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "K",
     cta: "cbt",
     title: "You're ready to book your CBT",
-    body: "Your UK car licence acts as your provisional for motorcycles. A CBT gets you on a 125cc, with the A2 full licence as your next step.",
+    body: "Your UK car licence acts as your provisional for motorcycles. A CBT gets you on a 125cc, with the A2 licence as your next step.",
     bullets: [
       "No separate provisional needed",
       "Ride up to 125cc (11kW) under L-plates",
-      "A2 full licence available — bikes up to 35kW",
+      "A2 licence available — bikes up to 35kW",
     ],
   },
   M: {
@@ -238,7 +238,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "Check exchange rules on GOV.UK for your country",
       "Then book a CBT to ride a 125cc",
-      "A1 full licence available from 17",
+      "A1 licence available from 17",
     ],
   },
   J: {
@@ -249,7 +249,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "Check exchange rules on GOV.UK",
       "Then book a CBT to start riding",
-      "A2 full licence available — bikes up to 35kW",
+      "A2 licence available — bikes up to 35kW",
     ],
   },
   N: {
