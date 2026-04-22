@@ -43,27 +43,27 @@ const LICENCE_OPTIONS: Record<
   { value: Licence; label: string; help?: string }[]
 > = {
   "16": [
-    { value: "none", label: "I don't have any licence yet" },
-    { value: "uk-provisional", label: "UK provisional licence" },
-    { value: "non-uk", label: "Non-UK licence" },
+    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
   ],
   "17-18": [
-    { value: "none", label: "I don't have any licence yet" },
-    { value: "uk-provisional", label: "UK provisional licence" },
-    { value: "non-uk", label: "Non-UK licence" },
-    { value: "uk-driving", label: "UK full driving licence (car)" },
+    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "19-23": [
-    { value: "none", label: "I don't have any licence yet" },
-    { value: "uk-provisional", label: "UK provisional licence" },
-    { value: "non-uk", label: "Non-UK licence" },
-    { value: "uk-driving", label: "UK full driving licence (car)" },
+    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "24+": [
-    { value: "none", label: "I don't have any licence yet" },
-    { value: "uk-provisional", label: "UK provisional licence" },
-    { value: "non-uk", label: "Non-UK licence" },
-    { value: "uk-driving", label: "UK full driving licence (car)" },
+    { value: "none", label: "I don't have a driving licence yet" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
 };
 
@@ -346,8 +346,8 @@ export function CourseFinder() {
 
         {stage === "licence" && age && (
           <QuestionPanel
-            question="What licence do you currently hold?"
-            help="Pick the option that best describes your situation today."
+            question="What driving licence do you currently hold?"
+            help="We mean a car or motorcycle driving licence (UK or overseas) — pick whichever best describes you today."
             options={LICENCE_OPTIONS[age].map((o) => ({
               key: o.value,
               label: o.label,
