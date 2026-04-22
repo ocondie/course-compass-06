@@ -26,8 +26,7 @@ function Index() {
           Not sure which course you need?
         </h1>
         <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-          Answer a few quick questions and we'll point you to the right motorcycle
-          course — from your first CBT to a full UK licence.
+          Answer a few quick questions and we'll point you to the right motorcycle training for you.
         </p>
         <div className="mt-8">
           <CourseFinder />
