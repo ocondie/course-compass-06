@@ -9,7 +9,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, RotateCcw, CheckCircle2, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  RotateCcw,
+  CheckCircle2,
+  Sparkles,
+  ShieldCheck,
+  AlertTriangle,
+  MapPin,
+} from "lucide-react";
 
 type AgeBand = "16" | "17-18" | "19-23" | "24+";
 type Licence = "none" | "uk-provisional" | "non-uk" | "uk-driving";
@@ -28,6 +36,30 @@ type Ending = {
   title: string;
   body: string;
   bullets: string[];
+};
+
+// --- Aspirations ---
+type BikeSize = "moped" | "125" | "midweight" | "unrestricted";
+type YesNoUnsure = "yes" | "no" | "unsure";
+
+type Aspirations = {
+  bikeSize: BikeSize;
+  passenger: YesNoUnsure;
+  motorways: YesNoUnsure;
+};
+
+// What an age/licence combo currently unlocks
+type EligibilityCap = {
+  // highest engine/power they can ride right now (after CBT etc.)
+  maxBikeNow: BikeSize;
+  // can they carry a passenger now?
+  passengerNow: boolean;
+  // can they use motorways now?
+  motorwaysNow: boolean;
+  // short summary line for the interim eligibility card
+  summary: string;
+  // what's eligible for them as a list of chips
+  chips: string[];
 };
 
 const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
@@ -67,6 +99,33 @@ const LICENCE_OPTIONS: Record<
   ],
 };
 
+const BIKE_SIZE_OPTIONS: { value: BikeSize; label: string; help: string }[] = [
+  { value: "moped", label: "Just a 50cc moped", help: "City runabout, 28mph max" },
+  { value: "125", label: "A 125cc commuter", help: "Up to 11kW — typical learner bike" },
+  { value: "midweight", label: "A midweight bike (up to 35kW)", help: "A2 territory — most popular roadbikes restricted" },
+  { value: "unrestricted", label: "Anything I like — no restrictions", help: "Full A — sportbikes, big tourers, no power cap" },
+];
+
+const YES_NO_UNSURE: { value: YesNoUnsure; label: string }[] = [
+  { value: "yes", label: "Yes" },
+  { value: "no", label: "No" },
+  { value: "unsure", label: "Not sure yet" },
+];
+
+const BIKE_RANK: Record<BikeSize, number> = {
+  moped: 0,
+  "125": 1,
+  midweight: 2,
+  unrestricted: 3,
+};
+
+const BIKE_LABEL: Record<BikeSize, string> = {
+  moped: "50cc moped",
+  "125": "125cc bike",
+  midweight: "midweight bike (up to 35kW)",
+  unrestricted: "any bike, no restrictions",
+};
+
 // Ending lookup keyed by `${age}|${licence}`
 const ENDING_MAP: Record<string, EndingId> = {
   "16|none": "A",
@@ -91,6 +150,44 @@ const CTA_LABEL: Record<CtaKind, string> = {
   cbt: "Book CBT",
   convert: "Convert licence",
 };
+
+// What each age band unlocks at the top of the licence ladder (after training)
+function eligibilityFor(age: AgeBand): EligibilityCap {
+  switch (age) {
+    case "16":
+      return {
+        maxBikeNow: "moped",
+        passengerNow: false,
+        motorwaysNow: false,
+        summary: "At 16 you can ride a 50cc moped on a CBT — no passengers, no motorways.",
+        chips: ["CBT", "50cc moped"],
+      };
+    case "17-18":
+      return {
+        maxBikeNow: "125",
+        passengerNow: false,
+        motorwaysNow: false,
+        summary: "At 17–18 you can CBT onto a 125cc, then take a full A1 licence to drop the L-plates.",
+        chips: ["CBT", "125cc (11kW)", "A1 licence"],
+      };
+    case "19-23":
+      return {
+        maxBikeNow: "midweight",
+        passengerNow: false,
+        motorwaysNow: false,
+        summary: "At 19–23 you can CBT onto a 125cc, then take a full A2 licence — bikes up to 35kW.",
+        chips: ["CBT", "125cc (11kW)", "A2 licence (up to 35kW)"],
+      };
+    case "24+":
+      return {
+        maxBikeNow: "unrestricted",
+        passengerNow: false,
+        motorwaysNow: false,
+        summary: "At 24+ you can CBT onto a 125cc, then go straight to a full A licence — any bike, no power cap.",
+        chips: ["CBT", "125cc (11kW)", "Full A licence (any power)"],
+      };
+  }
+}
 
 const ENDINGS: Record<EndingId, Ending> = {
   // --- Apply for provisional ---
@@ -265,26 +362,71 @@ const ENDINGS: Record<EndingId, Ending> = {
   },
 };
 
-type Stage = "age" | "licence" | "result";
+// Build a roadmap for users whose aspirations exceed what they can do today
+function roadmapFor(age: AgeBand, aspirations: Aspirations): string[] {
+  const steps: string[] = [];
+  const cap = eligibilityFor(age);
+  const wantsBigger = BIKE_RANK[aspirations.bikeSize] > BIKE_RANK[cap.maxBikeNow];
+  const wantsPassenger = aspirations.passenger === "yes";
+  const wantsMotorways = aspirations.motorways === "yes";
+
+  if (!wantsBigger && !wantsPassenger && !wantsMotorways) return steps;
+
+  if (age === "16" && (wantsBigger || wantsPassenger || wantsMotorways)) {
+    steps.push("At 17 you can CBT onto a 125cc and start working towards a full A1 licence.");
+  }
+  if (
+    (age === "16" || age === "17-18") &&
+    (BIKE_RANK[aspirations.bikeSize] >= BIKE_RANK["midweight"])
+  ) {
+    steps.push("From 19 you can take a full A2 licence — bikes up to 35kW.");
+  }
+  if (aspirations.bikeSize === "unrestricted" && age !== "24+") {
+    steps.push("From 24 (or 2 years after passing A2) you can take a full A licence — any power, no restrictions.");
+  }
+  if ((wantsPassenger || wantsMotorways) && age !== "16") {
+    steps.push("Passing a full A1, A2 or A licence removes L-plates — you can then carry passengers and use motorways.");
+  }
+  if (wantsPassenger && age === "16") {
+    steps.push("Carrying passengers and using motorways needs a full licence — earliest at 17 with A1.");
+  }
+
+  return steps;
+}
+
+type Stage = "age" | "licence" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
+
+const STAGE_ORDER: Stage[] = ["age", "licence", "eligibility", "bikeSize", "passenger", "motorways", "result"];
 
 export function CourseFinder() {
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState<Stage>("age");
   const [age, setAge] = useState<AgeBand | null>(null);
   const [licence, setLicence] = useState<Licence | null>(null);
+  const [bikeSize, setBikeSize] = useState<BikeSize | null>(null);
+  const [passenger, setPassenger] = useState<YesNoUnsure | null>(null);
+  const [motorways, setMotorways] = useState<YesNoUnsure | null>(null);
 
   const reset = () => {
     setStage("age");
     setAge(null);
     setLicence(null);
+    setBikeSize(null);
+    setPassenger(null);
+    setMotorways(null);
   };
 
   const back = () => {
-    if (stage === "result") setStage("licence");
-    else if (stage === "licence") {
-      setStage("age");
-      setLicence(null);
-    }
+    const idx = STAGE_ORDER.indexOf(stage);
+    if (idx <= 0) return;
+    setStage(STAGE_ORDER[idx - 1]);
+  };
+
+  const skipAspirations = () => {
+    setBikeSize(null);
+    setPassenger(null);
+    setMotorways(null);
+    setStage("result");
   };
 
   const handleAge = (value: AgeBand) => {
@@ -294,16 +436,48 @@ export function CourseFinder() {
 
   const handleLicence = (value: Licence) => {
     setLicence(value);
+    setStage("eligibility");
+  };
+
+  const handleBikeSize = (value: BikeSize) => {
+    setBikeSize(value);
+    setStage("passenger");
+  };
+
+  const handlePassenger = (value: YesNoUnsure) => {
+    setPassenger(value);
+    setStage("motorways");
+  };
+
+  const handleMotorways = (value: YesNoUnsure) => {
+    setMotorways(value);
     setStage("result");
   };
 
-  const progress =
-    stage === "age" ? 33 : stage === "licence" ? 66 : 100;
+  const progress = ((STAGE_ORDER.indexOf(stage) + 1) / STAGE_ORDER.length) * 100;
 
   const ending: Ending | null =
-    stage === "result" && age && licence
-      ? ENDINGS[ENDING_MAP[`${age}|${licence}`]]
+    age && licence ? ENDINGS[ENDING_MAP[`${age}|${licence}`]] : null;
+
+  const eligibility = age ? eligibilityFor(age) : null;
+
+  const aspirations: Aspirations | null =
+    bikeSize && passenger && motorways
+      ? { bikeSize, passenger, motorways }
       : null;
+
+  const roadmap =
+    age && aspirations ? roadmapFor(age, aspirations) : [];
+
+  // Module labels shown above the question
+  const moduleLabel =
+    stage === "age" || stage === "licence"
+      ? "Step 1 of 2 · Eligibility"
+      : stage === "eligibility"
+      ? "Eligibility check"
+      : stage === "bikeSize" || stage === "passenger" || stage === "motorways"
+      ? "Step 2 of 2 · What you want"
+      : "Your recommendation";
 
   return (
     <Dialog
@@ -319,15 +493,18 @@ export function CourseFinder() {
           Find my course
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Course Finder</DialogTitle>
           <DialogDescription>
-            Two quick questions and we'll tell you exactly what to do next.
+            A few quick questions and we'll point you to the right training.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-2">
+        <div className="mt-2 space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+            {moduleLabel}
+          </p>
           <Progress value={progress} className="h-1.5" />
         </div>
 
@@ -359,8 +536,69 @@ export function CourseFinder() {
           />
         )}
 
-        {stage === "result" && ending && (
-          <ResultPanel ending={ending} onBack={back} onReset={reset} />
+        {stage === "eligibility" && eligibility && ending && (
+          <EligibilityPanel
+            eligibility={eligibility}
+            ending={ending}
+            onContinue={() => setStage("bikeSize")}
+            onSkip={skipAspirations}
+            onBack={back}
+            onReset={reset}
+          />
+        )}
+
+        {stage === "bikeSize" && (
+          <QuestionPanel
+            question="What kind of bike do you actually want to ride?"
+            help="Pick your aspiration — we'll tell you if you can do it now, or what the path looks like."
+            options={BIKE_SIZE_OPTIONS.map((o) => ({
+              key: o.value,
+              label: o.label,
+              help: o.help,
+              onSelect: () => handleBikeSize(o.value),
+            }))}
+            onBack={back}
+            onReset={reset}
+          />
+        )}
+
+        {stage === "passenger" && (
+          <QuestionPanel
+            question="Do you want to carry a passenger?"
+            help="Pillion riding needs a full licence — not allowed on a CBT."
+            options={YES_NO_UNSURE.map((o) => ({
+              key: o.value,
+              label: o.label,
+              onSelect: () => handlePassenger(o.value),
+            }))}
+            onBack={back}
+            onReset={reset}
+          />
+        )}
+
+        {stage === "motorways" && (
+          <QuestionPanel
+            question="Do you want to use motorways?"
+            help="Motorways need a full licence — CBT-only riders can't use them."
+            options={YES_NO_UNSURE.map((o) => ({
+              key: o.value,
+              label: o.label,
+              onSelect: () => handleMotorways(o.value),
+            }))}
+            onBack={back}
+            onReset={reset}
+          />
+        )}
+
+        {stage === "result" && ending && eligibility && (
+          <ResultPanel
+            ending={ending}
+            aspirations={aspirations}
+            eligibility={eligibility}
+            roadmap={roadmap}
+            onBack={back}
+            onReset={reset}
+          />
         )}
       </DialogContent>
     </Dialog>
@@ -440,15 +678,99 @@ function QuestionPanel({
   );
 }
 
+function EligibilityPanel({
+  eligibility,
+  ending,
+  onContinue,
+  onSkip,
+  onBack,
+  onReset,
+}: {
+  eligibility: EligibilityCap;
+  ending: Ending;
+  onContinue: () => void;
+  onSkip: () => void;
+  onBack: () => void;
+  onReset: () => void;
+}) {
+  return (
+    <div className="space-y-5 py-2">
+      <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4">
+        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+            Here's what you can do
+          </p>
+          <p className="mt-1 text-sm leading-relaxed">{eligibility.summary}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {eligibility.chips.map((chip) => (
+              <span
+                key={chip}
+                className="inline-flex items-center rounded-full border border-primary/30 bg-background px-2.5 py-0.5 text-xs font-medium text-primary"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-border bg-card p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+          Want a tailored recommendation?
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+          Three more questions about the bike you actually want to ride and we'll match you to the right course — and show you the roadmap if you're aiming higher than your age allows today.
+        </p>
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <Button onClick={onContinue} className="sm:flex-1">
+            Yes, refine for me
+          </Button>
+          <Button variant="outline" onClick={onSkip} className="sm:flex-1">
+            Just show me {CTA_LABEL[ending.cta].toLowerCase()}
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between pt-2">
+        <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
+          <ArrowLeft className="size-4" />
+          Back
+        </Button>
+        <button
+          onClick={onReset}
+          className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+        >
+          Start over
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ResultPanel({
   ending,
+  aspirations,
+  eligibility,
+  roadmap,
   onBack,
   onReset,
 }: {
   ending: Ending;
+  aspirations: Aspirations | null;
+  eligibility: EligibilityCap;
+  roadmap: string[];
   onBack: () => void;
   onReset: () => void;
 }) {
+  const wantsBigger =
+    aspirations &&
+    BIKE_RANK[aspirations.bikeSize] > BIKE_RANK[eligibility.maxBikeNow];
+  const wantsPassenger = aspirations?.passenger === "yes";
+  const wantsMotorways = aspirations?.motorways === "yes";
+  const hasGap = roadmap.length > 0 && (wantsBigger || wantsPassenger || wantsMotorways);
+
   return (
     <div className="space-y-5 py-2">
       <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4">
@@ -471,6 +793,46 @@ function ResultPanel({
           </li>
         ))}
       </ul>
+
+      {aspirations && hasGap && (
+        <div className="rounded-lg border border-accent/40 bg-accent/10 p-4">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-accent" />
+            <div className="flex-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-accent">
+                You're aiming higher than today allows
+              </p>
+              <p className="mt-1 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+                You want a {BIKE_LABEL[aspirations.bikeSize]}
+                {wantsPassenger ? ", with a passenger" : ""}
+                {wantsMotorways ? ", on motorways" : ""}.
+                Right now you're capped at a {BIKE_LABEL[eligibility.maxBikeNow]} on L-plates.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {roadmap.length > 0 && (
+        <div className="rounded-lg border border-border bg-card p-4">
+          <div className="flex items-center gap-2">
+            <MapPin className="size-4 text-secondary" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-secondary">
+              Your roadmap
+            </p>
+          </div>
+          <ol className="mt-3 space-y-2">
+            {roadmap.map((step, i) => (
+              <li key={step} className="flex items-start gap-3 text-sm" style={{ fontFamily: "var(--font-body)" }}>
+                <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-xs font-semibold text-secondary">
+                  {i + 1}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
