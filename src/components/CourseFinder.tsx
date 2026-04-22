@@ -1,253 +1,309 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, RotateCcw, CheckCircle2, Sparkles } from "lucide-react";
 
-type CourseId = "cbt" | "cbt-renewal" | "full-licence" | "itm" | "gear-conversion";
+type AgeBand = "16" | "17-18" | "19-23" | "24+";
+type Licence = "none" | "uk-provisional" | "non-uk" | "uk-driving";
 
-type Course = {
-  id: CourseId;
-  name: string;
-  duration: string;
-  summary: string;
-  highlights: string[];
+type EndingId =
+  | "A" | "B" | "C"
+  | "D" | "E" | "F" | "G"
+  | "H" | "I" | "J" | "K"
+  | "L" | "M" | "N" | "O";
+
+type CtaKind = "provisional" | "cbt" | "convert";
+
+type Ending = {
+  id: EndingId;
+  cta: CtaKind;
+  title: string;
+  body: string;
+  bullets: string[];
 };
 
-const COURSES: Record<CourseId, Course> = {
-  cbt: {
-    id: "cbt",
-    name: "CBT Training",
-    duration: "1 day (6–8 hours)",
-    summary:
-      "The standard entry course that lets you legally ride a 125cc motorcycle or scooter on UK roads for 2 years.",
-    highlights: [
-      "Bike, fuel and online pre-training included",
-      "145+ UK locations, flexible cancellation",
-      "L-plates required, no passengers, no motorways",
+const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
+  { value: "16", label: "16", help: "Restricted to 50cc / 28mph" },
+  { value: "17-18", label: "17–18", help: "A1 category, up to 125cc (11kW)" },
+  { value: "19-23", label: "19–23", help: "A2 category, up to 35kW" },
+  { value: "24+", label: "24 or older", help: "Full A category, any power" },
+];
+
+// Per-age licence options (16-year-olds can't yet hold a UK driving licence)
+const LICENCE_OPTIONS: Record<
+  AgeBand,
+  { value: Licence; label: string; help?: string }[]
+> = {
+  "16": [
+    { value: "none", label: "I don't have any licence yet" },
+    { value: "uk-provisional", label: "UK provisional licence" },
+    { value: "non-uk", label: "Non-UK licence" },
+  ],
+  "17-18": [
+    { value: "none", label: "I don't have any licence yet" },
+    { value: "uk-provisional", label: "UK provisional licence" },
+    { value: "non-uk", label: "Non-UK licence" },
+    { value: "uk-driving", label: "UK full driving licence (car)" },
+  ],
+  "19-23": [
+    { value: "none", label: "I don't have any licence yet" },
+    { value: "uk-provisional", label: "UK provisional licence" },
+    { value: "non-uk", label: "Non-UK licence" },
+    { value: "uk-driving", label: "UK full driving licence (car)" },
+  ],
+  "24+": [
+    { value: "none", label: "I don't have any licence yet" },
+    { value: "uk-provisional", label: "UK provisional licence" },
+    { value: "non-uk", label: "Non-UK licence" },
+    { value: "uk-driving", label: "UK full driving licence (car)" },
+  ],
+};
+
+// Ending lookup keyed by `${age}|${licence}`
+const ENDING_MAP: Record<string, EndingId> = {
+  "16|none": "A",
+  "16|uk-provisional": "B",
+  "16|non-uk": "C",
+  "17-18|none": "D",
+  "17-18|uk-provisional": "E",
+  "17-18|non-uk": "F",
+  "17-18|uk-driving": "G",
+  "19-23|none": "H",
+  "19-23|uk-provisional": "I",
+  "19-23|non-uk": "J",
+  "19-23|uk-driving": "K",
+  "24+|none": "L",
+  "24+|uk-provisional": "M",
+  "24+|non-uk": "N",
+  "24+|uk-driving": "O",
+};
+
+const CTA_LABEL: Record<CtaKind, string> = {
+  provisional: "Apply for provisional",
+  cbt: "Book CBT",
+  convert: "Convert licence",
+};
+
+const ENDINGS: Record<EndingId, Ending> = {
+  // --- Apply for provisional ---
+  A: {
+    id: "A",
+    cta: "provisional",
+    title: "Apply for your UK provisional licence",
+    body: "At 16 you can apply for a provisional moped licence. Once you have it, your next step is a CBT — then you can ride a 50cc on the road.",
+    bullets: [
+      "Apply via GOV.UK (you'll need ID and proof of address)",
+      "Then book a CBT to start riding",
+      "At 16 you're limited to 50cc / 28mph",
     ],
   },
-  "cbt-renewal": {
-    id: "cbt-renewal",
-    name: "CBT Renewal",
-    duration: "1 day",
-    summary:
-      "The same 5-element CBT course, often delivered at a faster pace for riders renewing an expired or expiring certificate.",
-    highlights: [
-      "Extends your 125cc entitlement for another 2 years",
-      "Faster pace if you can demonstrate confidence",
-      "Same conditions apply: L-plates, no passengers, no motorways",
+  D: {
+    id: "D",
+    cta: "provisional",
+    title: "Apply for your UK provisional licence",
+    body: "You'll need a UK provisional before you can book a CBT. Once it arrives, a CBT lets you ride a 125cc on the road.",
+    bullets: [
+      "Apply via GOV.UK",
+      "Then book a CBT to ride a 125cc (up to 11kW)",
+      "Full A1 licence available from 17",
     ],
   },
-  "full-licence": {
-    id: "full-licence",
-    name: "Full Licence Training (A1 / A2 / A)",
-    duration: "Multi-day (2–5 sessions)",
-    summary:
-      "Training plus Module 1 and Module 2 tests for a full UK motorcycle licence — ride without L-plates, carry passengers, use motorways.",
-    highlights: [
-      "Choose 2, 3, 4 or 5-session packages based on experience",
-      "Bike category (A1 / A2 / A) is set by your age",
-      "Requires a current CBT and motorcycle theory certificate",
+  H: {
+    id: "H",
+    cta: "provisional",
+    title: "Apply for your UK provisional licence",
+    body: "At 19+ you'll need a UK provisional to start. After that, a CBT gets you on a 125cc, and you can progress to a full A2 licence (up to 35kW).",
+    bullets: [
+      "Apply via GOV.UK",
+      "Then book a CBT to start riding",
+      "A2 full licence available — bikes up to 35kW",
     ],
   },
-  itm: {
-    id: "itm",
-    name: "Introduction to Motorcycling",
-    duration: "2 hours, off-road",
-    summary:
-      "A relaxed, no-pressure 2-hour taster session for complete beginners — try riding before committing to a CBT.",
-    highlights: [
-      "Entirely off-road, no road riding",
-      "Covers controls, balance, clutch, gears and braking",
-      "Does not qualify you to ride on the road",
+  L: {
+    id: "L",
+    cta: "provisional",
+    title: "Apply for your UK provisional licence",
+    body: "At 24+ you can go straight to a full A licence with no power restrictions — but you'll need a provisional first, then a CBT to start training.",
+    bullets: [
+      "Apply via GOV.UK",
+      "Then book a CBT to start riding",
+      "Direct Access route to a full A licence (any power)",
     ],
   },
-  "gear-conversion": {
-    id: "gear-conversion",
-    name: "Gear Conversion Course",
-    duration: "2 hours",
-    summary:
-      "A skills course for CBT holders who trained on an automatic and want to ride a manual/geared motorcycle confidently.",
-    highlights: [
-      "Clutch control, smooth pull-away, gear changes",
-      "Max 2 students per instructor",
-      "Does not replace your CBT or grant new entitlement",
+
+  // --- Book CBT ---
+  B: {
+    id: "B",
+    cta: "cbt",
+    title: "You're ready to book your CBT",
+    body: "Your UK provisional covers you to take a CBT. One day of training and you can ride a 50cc on the road under L-plates.",
+    bullets: [
+      "1-day course (6–8 hours), bike and fuel included",
+      "At 16 you're restricted to 50cc / 28mph",
+      "Valid for 2 years — no passengers, no motorways",
+    ],
+  },
+  E: {
+    id: "E",
+    cta: "cbt",
+    title: "You're ready to book your CBT",
+    body: "Your UK provisional covers you for a CBT. After one day of training you can ride a 125cc on the road.",
+    bullets: [
+      "1-day course (6–8 hours), bike and fuel included",
+      "Ride up to 125cc (11kW) under L-plates",
+      "Valid for 2 years — then renew or take a full licence",
+    ],
+  },
+  G: {
+    id: "G",
+    cta: "cbt",
+    title: "You're ready to book your CBT",
+    body: "Your full UK car licence acts as your provisional for motorcycles. A CBT lets you ride a 125cc straight away.",
+    bullets: [
+      "No separate provisional needed",
+      "Ride up to 125cc (11kW) under L-plates",
+      "A1 full licence available — removes L-plates and restrictions",
+    ],
+  },
+  I: {
+    id: "I",
+    cta: "cbt",
+    title: "You're ready to book your CBT",
+    body: "Your UK provisional covers you for a CBT. After training you can ride a 125cc — and you're eligible for a full A2 licence.",
+    bullets: [
+      "1-day CBT course, bike and fuel included",
+      "A2 full licence route available — bikes up to 35kW",
+      "Valid for 2 years on a 125cc under L-plates",
+    ],
+  },
+  K: {
+    id: "K",
+    cta: "cbt",
+    title: "You're ready to book your CBT",
+    body: "Your UK car licence acts as your provisional for motorcycles. A CBT gets you on a 125cc, with the A2 full licence as your next step.",
+    bullets: [
+      "No separate provisional needed",
+      "Ride up to 125cc (11kW) under L-plates",
+      "A2 full licence available — bikes up to 35kW",
+    ],
+  },
+  M: {
+    id: "M",
+    cta: "cbt",
+    title: "You're ready to book your CBT",
+    body: "Your UK provisional covers you for a CBT. At 24+ you can also go straight to a full A licence with no power restrictions.",
+    bullets: [
+      "1-day CBT course, bike and fuel included",
+      "Direct Access to a full A licence (any power)",
+      "Valid for 2 years on a 125cc under L-plates",
+    ],
+  },
+  O: {
+    id: "O",
+    cta: "cbt",
+    title: "You're ready to book your CBT",
+    body: "Your UK car licence acts as your provisional for motorcycles. At 24+ you can take Direct Access to a full A licence — but a CBT is your starting point.",
+    bullets: [
+      "No separate provisional needed",
+      "Ride up to 125cc (11kW) under L-plates",
+      "Direct Access route available — full A, any power",
+    ],
+  },
+
+  // --- Convert licence ---
+  C: {
+    id: "C",
+    cta: "convert",
+    title: "Convert your non-UK licence",
+    body: "You'll need to exchange or convert your non-UK licence before you can train or ride here. Once that's done, the standard CBT route applies.",
+    bullets: [
+      "Check exchange rules on GOV.UK for your country",
+      "Then book a CBT to start riding (50cc at 16)",
+      "Some licences allow direct exchange, others require a UK test",
+    ],
+  },
+  F: {
+    id: "F",
+    cta: "convert",
+    title: "Convert your non-UK licence",
+    body: "You'll need to exchange or convert your non-UK licence before booking a CBT. After that you can ride a 125cc on the road.",
+    bullets: [
+      "Check exchange rules on GOV.UK for your country",
+      "Then book a CBT to ride a 125cc",
+      "A1 full licence available from 17",
+    ],
+  },
+  J: {
+    id: "J",
+    cta: "convert",
+    title: "Convert your non-UK licence",
+    body: "Convert your non-UK licence first, then take a CBT. At 19+ you're also eligible for the full A2 licence route.",
+    bullets: [
+      "Check exchange rules on GOV.UK",
+      "Then book a CBT to start riding",
+      "A2 full licence available — bikes up to 35kW",
+    ],
+  },
+  N: {
+    id: "N",
+    cta: "convert",
+    title: "Convert your non-UK licence",
+    body: "Convert your non-UK licence first, then take a CBT. At 24+ you can take Direct Access to a full A licence with no restrictions.",
+    bullets: [
+      "Check exchange rules on GOV.UK",
+      "Then book a CBT to start riding",
+      "Direct Access route available — full A, any power",
     ],
   },
 };
 
-type Option = { label: string; next: string };
-type Step =
-  | { id: string; type: "question"; question: string; help?: string; options: Option[] }
-  | { id: string; type: "result"; course: CourseId; reason: string };
-
-const STEPS: Record<string, Step> = {
-  start: {
-    id: "start",
-    type: "question",
-    question: "Where are you in your motorcycling journey?",
-    help: "Pick the option that best describes you right now.",
-    options: [
-      { label: "Complete beginner — I've never ridden", next: "beginner-sure" },
-      { label: "I want my first CBT to ride a 125cc", next: "first-cbt-bike" },
-      { label: "I already have a CBT", next: "have-cbt" },
-      { label: "I want a full motorcycle licence", next: "full-have-cbt" },
-    ],
-  },
-
-  // Beginner branch
-  "beginner-sure": {
-    id: "beginner-sure",
-    type: "question",
-    question: "Are you ready to commit to a full day of riding?",
-    help: "A CBT is a 6–8 hour course. A taster session is just 2 hours, off-road.",
-    options: [
-      { label: "I'd like a short taster first", next: "result-itm" },
-      { label: "Yes, I want to get on the road", next: "first-cbt-bike" },
-      { label: "Not sure — I want low pressure", next: "result-itm" },
-    ],
-  },
-
-  // First CBT branch — bike type
-  "first-cbt-bike": {
-    id: "first-cbt-bike",
-    type: "question",
-    question: "Which bike do you want to ride?",
-    help: "This decides whether you train on an automatic scooter or a manual/geared motorcycle.",
-    options: [
-      { label: "Automatic scooter", next: "result-cbt" },
-      { label: "Manual / geared motorcycle", next: "first-cbt-manual-exp" },
-      { label: "I'm not sure yet", next: "result-cbt" },
-    ],
-  },
-  "first-cbt-manual-exp": {
-    id: "first-cbt-manual-exp",
-    type: "question",
-    question: "Have you ridden a manual/geared motorcycle before?",
-    options: [
-      { label: "Yes, I'm comfortable with gears", next: "result-cbt" },
-      { label: "No — I've never used a clutch on a bike", next: "result-itm-then-cbt" },
-    ],
-  },
-
-  // Have CBT branch
-  "have-cbt": {
-    id: "have-cbt",
-    type: "question",
-    question: "What's the status of your CBT certificate?",
-    help: "CBT certificates are valid for 2 years.",
-    options: [
-      { label: "Expired or expiring soon", next: "result-renewal" },
-      { label: "Still valid — I want more skills", next: "have-cbt-skills" },
-      { label: "Still valid — I want a full licence", next: "full-have-cbt" },
-    ],
-  },
-  "have-cbt-skills": {
-    id: "have-cbt-skills",
-    type: "question",
-    question: "Did you take your CBT on an automatic or manual bike?",
-    options: [
-      { label: "Automatic — I want to ride a manual", next: "result-gear" },
-      { label: "Manual — I want more practice", next: "result-gear" },
-      { label: "Manual — I'm confident already", next: "full-have-cbt" },
-    ],
-  },
-
-  // Full licence branch
-  "full-have-cbt": {
-    id: "full-have-cbt",
-    type: "question",
-    question: "Do you already have a CBT and motorcycle theory certificate?",
-    help: "Both are required before booking full licence training.",
-    options: [
-      { label: "Yes, I have both", next: "full-experience" },
-      { label: "I have CBT, not theory", next: "full-experience" },
-      { label: "I have neither", next: "result-cbt-first" },
-    ],
-  },
-  "full-experience": {
-    id: "full-experience",
-    type: "question",
-    question: "How experienced are you on a manual motorcycle on UK roads?",
-    help: "This decides which training package suits you best.",
-    options: [
-      { label: "Very experienced — fast-track me", next: "result-full-3" },
-      { label: "Some real-road manual experience", next: "result-full-4" },
-      { label: "CBT-level rider, any experience", next: "result-full-5" },
-      { label: "Not confident — train me first, no test yet", next: "result-full-2" },
-    ],
-  },
-
-  // Results
-  "result-cbt": { id: "result-cbt", type: "result", course: "cbt", reason: "You're ready to get on the road and earn your 125cc entitlement." },
-  "result-renewal": { id: "result-renewal", type: "result", course: "cbt-renewal", reason: "Your existing CBT means you just need to renew to keep riding." },
-  "result-itm": { id: "result-itm", type: "result", course: "itm", reason: "A 2-hour off-road taster is the lowest-pressure way to try riding." },
-  "result-itm-then-cbt": {
-    id: "result-itm-then-cbt",
-    type: "result",
-    course: "itm",
-    reason: "Start with an Introduction to Motorcycling to learn clutch and gears off-road, then progress to a CBT on a manual.",
-  },
-  "result-gear": {
-    id: "result-gear",
-    type: "result",
-    course: "gear-conversion",
-    reason: "A Gear Conversion course builds manual riding skills under your existing CBT — strongly recommended before riding a geared bike.",
-  },
-  "result-cbt-first": {
-    id: "result-cbt-first",
-    type: "result",
-    course: "cbt",
-    reason: "You'll need a CBT (and motorcycle theory) before you can start full licence training.",
-  },
-  "result-full-3": {
-    id: "result-full-3",
-    type: "result",
-    course: "full-licence",
-    reason: "Recommended package: 3 sessions including both tests — fast-track for very experienced manual riders.",
-  },
-  "result-full-4": {
-    id: "result-full-4",
-    type: "result",
-    course: "full-licence",
-    reason: "Recommended package: 4 sessions including both tests — for riders with real-road manual experience.",
-  },
-  "result-full-5": {
-    id: "result-full-5",
-    type: "result",
-    course: "full-licence",
-    reason: "Recommended package: 5 sessions including both tests — full training and test prep from CBT level.",
-  },
-  "result-full-2": {
-    id: "result-full-2",
-    type: "result",
-    course: "full-licence",
-    reason: "Recommended package: 2 sessions, training only — build skills and get an instructor assessment before booking tests.",
-  },
-};
-
-// Approximate progress based on typical depth (3–4 questions)
-const MAX_DEPTH = 4;
+type Stage = "age" | "licence" | "result";
 
 export function CourseFinder() {
   const [open, setOpen] = useState(false);
-  const [history, setHistory] = useState<string[]>(["start"]);
+  const [stage, setStage] = useState<Stage>("age");
+  const [age, setAge] = useState<AgeBand | null>(null);
+  const [licence, setLicence] = useState<Licence | null>(null);
 
-  const currentId = history[history.length - 1];
-  const current = STEPS[currentId];
+  const reset = () => {
+    setStage("age");
+    setAge(null);
+    setLicence(null);
+  };
 
-  const reset = () => setHistory(["start"]);
-  const back = () => setHistory((h) => (h.length > 1 ? h.slice(0, -1) : h));
+  const back = () => {
+    if (stage === "result") setStage("licence");
+    else if (stage === "licence") {
+      setStage("age");
+      setLicence(null);
+    }
+  };
 
-  const handleSelect = (next: string) => {
-    setHistory((h) => [...h, next]);
+  const handleAge = (value: AgeBand) => {
+    setAge(value);
+    setStage("licence");
+  };
+
+  const handleLicence = (value: Licence) => {
+    setLicence(value);
+    setStage("result");
   };
 
   const progress =
-    current.type === "result"
-      ? 100
-      : Math.min(95, ((history.length - 1) / MAX_DEPTH) * 100 + 10);
+    stage === "age" ? 33 : stage === "licence" ? 66 : 100;
+
+  const ending: Ending | null =
+    stage === "result" && age && licence
+      ? ENDINGS[ENDING_MAP[`${age}|${licence}`]]
+      : null;
 
   return (
     <Dialog
@@ -267,7 +323,7 @@ export function CourseFinder() {
         <DialogHeader>
           <DialogTitle className="text-2xl">Course Finder</DialogTitle>
           <DialogDescription>
-            Answer a few quick questions and we'll recommend the right course for you.
+            Two quick questions and we'll tell you exactly what to do next.
           </DialogDescription>
         </DialogHeader>
 
@@ -275,66 +331,121 @@ export function CourseFinder() {
           <Progress value={progress} className="h-1.5" />
         </div>
 
-        {current.type === "question" ? (
-          <div className="space-y-5 py-2">
-            <div>
-              <h3 className="text-lg font-semibold leading-snug">{current.question}</h3>
-              {current.help && (
-                <p className="mt-1 text-sm text-muted-foreground">{current.help}</p>
-              )}
-            </div>
+        {stage === "age" && (
+          <QuestionPanel
+            question="How old are you?"
+            help="Your age determines which licence categories are available to you."
+            options={AGE_OPTIONS.map((o) => ({
+              key: o.value,
+              label: o.label,
+              help: o.help,
+              onSelect: () => handleAge(o.value),
+            }))}
+          />
+        )}
 
-            <div className="grid gap-2">
-              {current.options.map((opt) => (
-                <button
-                  key={opt.label}
-                  onClick={() => handleSelect(opt.next)}
-                  className="group flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 text-left text-sm font-medium transition-all hover:border-primary hover:bg-accent hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <span>{opt.label}</span>
-                  <span className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary">
-                    →
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {history.length > 1 && (
-              <div className="flex items-center justify-between pt-2">
-                <Button variant="ghost" size="sm" onClick={back} className="gap-1.5">
-                  <ArrowLeft className="size-4" />
-                  Back
-                </Button>
-                <button
-                  onClick={reset}
-                  className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-                >
-                  Start over
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <ResultPanel
-            course={COURSES[current.course]}
-            reason={current.reason}
+        {stage === "licence" && age && (
+          <QuestionPanel
+            question="What licence do you currently hold?"
+            help="Pick the option that best describes your situation today."
+            options={LICENCE_OPTIONS[age].map((o) => ({
+              key: o.value,
+              label: o.label,
+              help: o.help,
+              onSelect: () => handleLicence(o.value),
+            }))}
             onBack={back}
             onReset={reset}
           />
+        )}
+
+        {stage === "result" && ending && (
+          <ResultPanel ending={ending} onBack={back} onReset={reset} />
         )}
       </DialogContent>
     </Dialog>
   );
 }
 
-function ResultPanel({
-  course,
-  reason,
+type OptionItem = {
+  key: string;
+  label: string;
+  help?: string;
+  onSelect: () => void;
+};
+
+function QuestionPanel({
+  question,
+  help,
+  options,
   onBack,
   onReset,
 }: {
-  course: Course;
-  reason: string;
+  question: string;
+  help?: string;
+  options: OptionItem[];
+  onBack?: () => void;
+  onReset?: () => void;
+}) {
+  return (
+    <div className="space-y-5 py-2">
+      <div>
+        <h3 className="text-lg font-semibold leading-snug">{question}</h3>
+        {help && <p className="mt-1 text-sm text-muted-foreground">{help}</p>}
+      </div>
+
+      <div className="grid gap-2">
+        {options.map((opt) => (
+          <button
+            key={opt.key}
+            onClick={opt.onSelect}
+            className="group flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left transition-all hover:border-primary hover:bg-accent hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="flex flex-col">
+              <span className="text-sm font-medium">{opt.label}</span>
+              {opt.help && (
+                <span className="mt-0.5 text-xs text-muted-foreground">
+                  {opt.help}
+                </span>
+              )}
+            </span>
+            <span className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary">
+              →
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {(onBack || onReset) && (
+        <div className="flex items-center justify-between pt-2">
+          {onBack ? (
+            <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
+              <ArrowLeft className="size-4" />
+              Back
+            </Button>
+          ) : (
+            <span />
+          )}
+          {onReset && (
+            <button
+              onClick={onReset}
+              className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Start over
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResultPanel({
+  ending,
+  onBack,
+  onReset,
+}: {
+  ending: Ending;
   onBack: () => void;
   onReset: () => void;
 }) {
@@ -344,27 +455,22 @@ function ResultPanel({
         <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-            Recommended for you
+            Your next step
           </p>
-          <h3 className="mt-1 text-xl font-semibold">{course.name}</h3>
-          <p className="mt-0.5 text-sm text-muted-foreground">{course.duration}</p>
+          <h3 className="mt-1 text-xl font-semibold">{ending.title}</h3>
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed">{reason}</p>
+      <p className="text-sm leading-relaxed">{ending.body}</p>
 
-      <div>
-        <p className="text-sm font-medium">About this course</p>
-        <p className="mt-1 text-sm text-muted-foreground">{course.summary}</p>
-        <ul className="mt-3 space-y-1.5">
-          {course.highlights.map((h) => (
-            <li key={h} className="flex items-start gap-2 text-sm">
-              <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
-              <span>{h}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul className="space-y-1.5">
+        {ending.bullets.map((b) => (
+          <li key={b} className="flex items-start gap-2 text-sm">
+            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+            <span>{b}</span>
+          </li>
+        ))}
+      </ul>
 
       <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
@@ -377,8 +483,8 @@ function ResultPanel({
             Start over
           </Button>
         </div>
-        <Button size="lg" className="sm:min-w-40">
-          Book {course.name.split(" ")[0]}
+        <Button size="lg" className="sm:min-w-44">
+          {CTA_LABEL[ending.cta]}
         </Button>
       </div>
     </div>
