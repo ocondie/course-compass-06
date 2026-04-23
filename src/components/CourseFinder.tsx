@@ -462,8 +462,8 @@ function journeyFor(
     title: "Compulsory Basic Training (CBT)",
     description:
       age === "16"
-        ? "One day of training. Lets you ride a 50cc moped on the road under L-plates. Valid 2 years."
-        : "One day of training. Lets you ride up to 125cc (11kW) on the road under L-plates. Valid 2 years.",
+        ? "One day of training. Lets you ride a 50cc moped on the road under L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence."
+        : "One day of training. Lets you ride up to 125cc (14.8HP) on the road under L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence.",
     status: cbtStatus,
     icon: "cbt",
     blockedBy: cbtStatus === "locked" ? "UK provisional licence" : undefined,
@@ -484,8 +484,8 @@ function journeyFor(
     if (age === "16") {
       stages.push({
         key: "a1",
-        title: "Full A1 licence (from 17)",
-        description: "Removes L-plates on 125cc. Lets you carry a passenger and use motorways. Needs motorcycle theory + Mod 1 + Mod 2.",
+        title: "Restricted A1 licence (from 17)",
+        description: "125cc / 14.8HP. No L-plates, passengers allowed, motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Turn 17 and pass your CBT first",
@@ -493,8 +493,8 @@ function journeyFor(
     } else if (age === "17-18") {
       stages.push({
         key: "a1",
-        title: "Full A1 licence",
-        description: "Removes L-plates on 125cc. Lets you carry a passenger and use motorways. Needs motorcycle theory + Mod 1 + Mod 2.",
+        title: "Restricted A1 licence",
+        description: "125cc / 14.8HP. No L-plates, passengers allowed, motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Pass your CBT first",
@@ -502,18 +502,18 @@ function journeyFor(
       if (BIKE_RANK[target] >= BIKE_RANK["midweight"]) {
         stages.push({
           key: "a2",
-          title: "Full A2 licence (from 19)",
-          description: "Bikes up to 35kW, no L-plates, passengers and motorways allowed.",
+          title: "Restricted A2 licence (from 19)",
+          description: "Medium motorcycle — no engine cap, restricted to 47HP. No L-plates, passengers and motorways allowed.",
           status: "locked",
           icon: "fullLicence",
-          blockedBy: "Turn 19 and pass A1 or CBT route",
+          blockedBy: "Turn 19 and pass your CBT first",
         });
       }
     } else if (age === "19-23") {
       stages.push({
         key: "a2",
-        title: "Full A2 licence",
-        description: "Bikes up to 35kW, no L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
+        title: "Restricted A2 licence",
+        description: "Medium motorcycle — no engine cap, restricted to 47HP. No L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Pass your CBT first",
@@ -521,18 +521,18 @@ function journeyFor(
       if (target === "unrestricted") {
         stages.push({
           key: "a",
-          title: "Full A licence (from 24, or 2 years after A2)",
-          description: "Any bike, any power. The top tier — no restrictions.",
+          title: "Full A licence (from 24 direct, or 21 with 2 years on A2)",
+          description: "Any bike, any power — no restrictions on engine size or HP. No L-plates, passengers and motorways allowed.",
           status: "locked",
           icon: "fullLicence",
-          blockedBy: "Turn 24, or hold A2 for 2 years",
+          blockedBy: "Turn 24, or hold A2 for 2 years (from 21)",
         });
       }
     } else if (age === "24+") {
       stages.push({
         key: "a",
         title: "Full A licence (Direct Access)",
-        description: "Any bike, any power, no L-plates. The top tier — needs motorcycle theory + Mod 1 + Mod 2.",
+        description: "Any bike, any power — no restrictions. No L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Pass your CBT first",
