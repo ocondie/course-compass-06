@@ -657,12 +657,14 @@ export function CourseFinder({
         if (!o) setTimeout(reset, 200);
       }}
     >
-      <DialogTrigger asChild>
-        <Button size="lg" className="gap-2">
-          <Sparkles className="size-4" />
-          Find my course
-        </Button>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger asChild>
+          <Button size="lg" className="gap-2">
+            <Sparkles className="size-4" />
+            Find my course
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="sr-only">
           <DialogTitle>Course Finder</DialogTitle>
