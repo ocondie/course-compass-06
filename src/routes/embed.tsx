@@ -28,6 +28,11 @@ function EmbedPage() {
     if (typeof window !== "undefined" && window.parent !== window) {
       window.parent.postMessage({ type: "rideto:ready" }, "*");
     }
+    // Ensure the iframe document itself is transparent so the host page shows through.
+    if (typeof document !== "undefined") {
+      document.documentElement.style.background = "transparent";
+      document.body.style.background = "transparent";
+    }
   }, []);
 
   return (
