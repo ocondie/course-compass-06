@@ -75,27 +75,27 @@ const LICENCE_OPTIONS: Record<
   { value: Licence; label: string; help?: string }[]
 > = {
   "16": [
-    { value: "none", label: "I don't have any kind of driving licence" },
-    { value: "uk-provisional", label: "UK provisional driving licence" },
-    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
+    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
+    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
   ],
   "17-18": [
-    { value: "none", label: "I don't have any kind of driving licence" },
-    { value: "uk-provisional", label: "UK provisional driving licence" },
-    { value: "non-uk", label: "Non-UK driving licence" },
-    { value: "uk-driving", label: "UK full car driving licence" },
+    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
+    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
+    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
+    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
   ],
   "19-23": [
-    { value: "none", label: "I don't have any kind of driving licence" },
-    { value: "uk-provisional", label: "UK provisional driving licence" },
-    { value: "non-uk", label: "Non-UK driving licence" },
-    { value: "uk-driving", label: "UK full car driving licence" },
+    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
+    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
+    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
+    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
   ],
   "24+": [
-    { value: "none", label: "I don't have any kind of driving licence" },
-    { value: "uk-provisional", label: "UK provisional driving licence" },
-    { value: "non-uk", label: "Non-UK driving licence" },
-    { value: "uk-driving", label: "UK full car driving licence" },
+    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
+    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
+    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
+    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
   ],
 };
 
