@@ -547,8 +547,26 @@ type Stage = "age" | "licence" | "eligibility" | "bikeSize" | "passenger" | "mot
 
 const STAGE_ORDER: Stage[] = ["age", "licence", "eligibility", "bikeSize", "passenger", "motorways", "result"];
 
-export function CourseFinder() {
-  const [open, setOpen] = useState(false);
+type CourseFinderProps = {
+  /** Controlled open state. If provided, parent owns open/close. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Hide the built-in "Find my course" trigger button (for embed/external trigger). */
+  hideTrigger?: boolean;
+};
+
+export function CourseFinder({
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
+}: CourseFinderProps = {}) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (next: boolean) => {
+    if (!isControlled) setInternalOpen(next);
+    onOpenChange?.(next);
+  };
   const [stage, setStage] = useState<Stage>("age");
   const [age, setAge] = useState<AgeBand | null>(null);
   const [licence, setLicence] = useState<Licence | null>(null);
