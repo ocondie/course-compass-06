@@ -925,6 +925,7 @@ function ResultPanel({
   aspirations,
   eligibility,
   roadmap,
+  journey,
   onBack,
   onReset,
 }: {
@@ -932,6 +933,7 @@ function ResultPanel({
   aspirations: Aspirations | null;
   eligibility: EligibilityCap;
   roadmap: string[];
+  journey: JourneyStage[];
   onBack: () => void;
   onReset: () => void;
 }) {
@@ -954,17 +956,6 @@ function ResultPanel({
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed">{ending.body}</p>
-
-      <ul className="space-y-1.5">
-        {ending.bullets.map((b) => (
-          <li key={b} className="flex items-start gap-2 text-sm">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
-
       {aspirations && hasGap && (
         <div className="rounded-lg border border-accent/40 bg-accent/10 p-4">
           <div className="flex items-start gap-2">
@@ -984,24 +975,18 @@ function ResultPanel({
         </div>
       )}
 
-      {roadmap.length > 0 && (
+      {journey.length > 0 && (
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex items-center gap-2">
             <MapPin className="size-4 text-secondary" />
             <p className="text-xs font-semibold uppercase tracking-wide text-secondary">
-              Your roadmap
+              Your journey, step by step
             </p>
           </div>
-          <ol className="mt-3 space-y-2">
-            {roadmap.map((step, i) => (
-              <li key={step} className="flex items-start gap-3 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-xs font-semibold text-secondary">
-                  {i + 1}
-                </span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ol>
+          <p className="mt-1 text-xs text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+            Each step unlocks the next. You can't skip ahead — for example, you need a CBT before any full A1, A2 or A licence.
+          </p>
+          <JourneyStages stages={journey} />
         </div>
       )}
 
@@ -1021,5 +1006,92 @@ function ResultPanel({
         </Button>
       </div>
     </div>
+  );
+}
+
+const JOURNEY_ICON: Record<JourneyStage["icon"], typeof IdCard> = {
+  licence: IdCard,
+  cbt: GraduationCap,
+  bike: Bike,
+  fullLicence: GraduationCap,
+};
+
+function JourneyStages({ stages }: { stages: JourneyStage[] }) {
+  return (
+    <ol className="mt-4 space-y-3">
+      {stages.map((s, i) => {
+        const Icon = JOURNEY_ICON[s.icon];
+        const isDone = s.status === "done";
+        const isNow = s.status === "now";
+        const isLocked = s.status === "locked";
+
+        const containerClasses = isNow
+          ? "border-primary/40 bg-primary/5"
+          : isDone
+          ? "border-border bg-muted/40"
+          : "border-dashed border-border bg-background opacity-75";
+
+        const badge = isDone ? (
+          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <CheckCircle2 className="size-4" />
+          </span>
+        ) : isNow ? (
+          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+            {i + 1}
+          </span>
+        ) : (
+          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground">
+            <Lock className="size-3.5" />
+          </span>
+        );
+
+        const statusPill = isDone ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary" style={{ fontFamily: "var(--font-body)" }}>
+            <CheckCircle2 className="size-3" /> Done
+          </span>
+        ) : isNow ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground" style={{ fontFamily: "var(--font-body)" }}>
+            <Circle className="size-2 fill-current" /> Do this now
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+            <Lock className="size-3" /> Locked
+          </span>
+        );
+
+        return (
+          <li key={s.key} className="relative">
+            {i < stages.length - 1 && (
+              <span
+                aria-hidden
+                className={`absolute left-[26px] top-[44px] h-[calc(100%-20px)] w-px ${
+                  isDone ? "bg-primary/30" : "bg-border"
+                }`}
+              />
+            )}
+            <div className={`flex gap-3 rounded-lg border p-3 ${containerClasses}`}>
+              {badge}
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Icon className={`size-4 shrink-0 ${isLocked ? "text-muted-foreground" : "text-primary"}`} />
+                  <h4 className={`text-sm font-semibold ${isLocked ? "text-muted-foreground" : ""}`}>
+                    Step {i + 1}: {s.title}
+                  </h4>
+                  {statusPill}
+                </div>
+                <p className={`mt-1 text-xs leading-relaxed ${isLocked ? "text-muted-foreground" : "text-foreground/80"}`} style={{ fontFamily: "var(--font-body)" }}>
+                  {s.description}
+                </p>
+                {isLocked && s.blockedBy && (
+                  <p className="mt-1.5 text-[11px] font-medium text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+                    🔒 Unlocks after: {s.blockedBy}
+                  </p>
+                )}
+              </div>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
