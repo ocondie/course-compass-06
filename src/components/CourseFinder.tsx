@@ -17,6 +17,11 @@ import {
   ShieldCheck,
   AlertTriangle,
   MapPin,
+  Lock,
+  Circle,
+  IdCard,
+  Bike,
+  GraduationCap,
 } from "lucide-react";
 
 type AgeBand = "16" | "17-18" | "19-23" | "24+";
