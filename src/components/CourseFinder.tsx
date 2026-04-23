@@ -618,6 +618,9 @@ export function CourseFinder() {
   const roadmap =
     age && aspirations ? roadmapFor(age, aspirations) : [];
 
+  const journey =
+    age && licence ? journeyFor(age, licence, aspirations) : [];
+
   // Module labels shown above the question
   const moduleLabel =
     stage === "age" || stage === "licence"
