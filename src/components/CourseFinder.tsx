@@ -748,6 +748,7 @@ export function CourseFinder() {
             aspirations={aspirations}
             eligibility={eligibility}
             roadmap={roadmap}
+            journey={journey}
             onBack={back}
             onReset={reset}
           />
