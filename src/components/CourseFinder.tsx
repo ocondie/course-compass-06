@@ -847,10 +847,26 @@ function EligibilityPanel({
   onReset: () => void;
 }) {
   const isBlocked = ending.cta !== "cbt";
-  const blockerMessage =
+  const blockerHeading =
     ending.cta === "provisional"
-      ? "You'll need at least a UK provisional driving licence before you can book any motorcycle training. Apply via GOV.UK first — it usually takes a couple of weeks."
-      : "You'll need to exchange or convert your non-UK licence to a UK one before you can book any motorcycle training. Check the rules for your country on GOV.UK.";
+      ? "You'll need a UK provisional first"
+      : "Your non-UK licence won't cover you here";
+  const blockerIntro =
+    ending.cta === "provisional"
+      ? "We can't book you onto any motorcycle training until you hold a UK provisional driving licence."
+      : "A non-UK licence doesn't give you motorcycle entitlement in the UK, so you can't book training on it directly.";
+  const blockerSteps =
+    ending.cta === "provisional"
+      ? [
+          "Apply for a UK provisional licence on GOV.UK (you'll need ID and proof of address)",
+          "It usually arrives within 1–3 weeks",
+          "Once it's in your hand, come back and book your CBT",
+        ]
+      : [
+          "EU/EEA licence: you can usually exchange it for a UK licence on GOV.UK, or apply for a UK provisional alongside it",
+          "Non-EU licence: if you've recently become a UK resident, you have 12 months to exchange it — otherwise you'll need a UK provisional",
+          "Once you hold a UK provisional (or exchanged licence), you're cleared to book your CBT",
+        ];
 
   return (
     <div className="space-y-5 py-2">
@@ -861,7 +877,20 @@ function EligibilityPanel({
             <p className="text-xs font-semibold uppercase tracking-wide text-destructive">
               Before you can book
             </p>
-            <p className="mt-1 text-sm leading-relaxed">{blockerMessage}</p>
+            <p className="mt-1 text-sm font-semibold leading-snug text-destructive">
+              {blockerHeading}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-foreground/80">
+              {blockerIntro}
+            </p>
+            <ul className="mt-2 space-y-1 text-sm leading-relaxed text-foreground/80">
+              {blockerSteps.map((step) => (
+                <li key={step} className="flex gap-2">
+                  <span className="mt-2 size-1 shrink-0 rounded-full bg-destructive/60" />
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       )}
