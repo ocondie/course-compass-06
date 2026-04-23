@@ -17,6 +17,11 @@ import {
   ShieldCheck,
   AlertTriangle,
   MapPin,
+  Lock,
+  Circle,
+  IdCard,
+  Bike,
+  GraduationCap,
 } from "lucide-react";
 
 type AgeBand = "16" | "17-18" | "19-23" | "24+";
@@ -395,6 +400,149 @@ function roadmapFor(age: AgeBand, aspirations: Aspirations): string[] {
   return steps;
 }
 
+// --- Journey stages (the visual roadmap shown on the result screen) ---
+type JourneyStatus = "done" | "now" | "locked";
+type JourneyStage = {
+  key: string;
+  title: string;
+  description: string;
+  status: JourneyStatus;
+  icon: "licence" | "cbt" | "bike" | "fullLicence";
+  blockedBy?: string;
+};
+
+function journeyFor(
+  age: AgeBand,
+  licence: Licence,
+  aspirations: Aspirations | null,
+): JourneyStage[] {
+  const stages: JourneyStage[] = [];
+  const cap = eligibilityFor(age);
+
+  // --- Stage 1: UK provisional licence ---
+  const hasUkEntitlement = licence === "uk-provisional" || licence === "uk-driving";
+  if (licence === "uk-driving") {
+    stages.push({
+      key: "licence",
+      title: "UK driving licence",
+      description: "Your full UK car licence covers the provisional entitlement you need to train.",
+      status: "done",
+      icon: "licence",
+    });
+  } else if (licence === "uk-provisional") {
+    stages.push({
+      key: "licence",
+      title: "UK provisional licence",
+      description: "You already have the provisional entitlement needed to book a CBT.",
+      status: "done",
+      icon: "licence",
+    });
+  } else if (licence === "non-uk") {
+    stages.push({
+      key: "licence",
+      title: "Exchange your non-UK licence",
+      description: "You need to swap your overseas licence for a UK one before you can train. Check the rules for your country on GOV.UK.",
+      status: "now",
+      icon: "licence",
+    });
+  } else {
+    stages.push({
+      key: "licence",
+      title: "Get a UK provisional licence",
+      description: "Apply via GOV.UK — usually a couple of weeks. You can't book any motorcycle training without it.",
+      status: "now",
+      icon: "licence",
+    });
+  }
+
+  // --- Stage 2: CBT ---
+  const cbtStatus: JourneyStatus = hasUkEntitlement ? "now" : "locked";
+  stages.push({
+    key: "cbt",
+    title: "Compulsory Basic Training (CBT)",
+    description:
+      age === "16"
+        ? "One day of training. Lets you ride a 50cc moped on the road under L-plates. Valid 2 years."
+        : "One day of training. Lets you ride up to 125cc (11kW) on the road under L-plates. Valid 2 years.",
+    status: cbtStatus,
+    icon: "cbt",
+    blockedBy: cbtStatus === "locked" ? "UK provisional licence" : undefined,
+  });
+
+  // --- Stage 3: Full licence tiers — only show what's relevant to aspirations ---
+  const wantsBigger =
+    aspirations &&
+    BIKE_RANK[aspirations.bikeSize] > BIKE_RANK[cap.maxBikeNow];
+  const wantsPassenger = aspirations?.passenger === "yes";
+  const wantsMotorways = aspirations?.motorways === "yes";
+  const wantsFullLicence =
+    !aspirations || wantsBigger || wantsPassenger || wantsMotorways;
+
+  if (wantsFullLicence) {
+    const target = aspirations?.bikeSize ?? "midweight";
+
+    if (age === "16") {
+      stages.push({
+        key: "a1",
+        title: "Full A1 licence (from 17)",
+        description: "Removes L-plates on 125cc. Lets you carry a passenger and use motorways. Needs motorcycle theory + Mod 1 + Mod 2.",
+        status: "locked",
+        icon: "fullLicence",
+        blockedBy: "Turn 17 and pass your CBT first",
+      });
+    } else if (age === "17-18") {
+      stages.push({
+        key: "a1",
+        title: "Full A1 licence",
+        description: "Removes L-plates on 125cc. Lets you carry a passenger and use motorways. Needs motorcycle theory + Mod 1 + Mod 2.",
+        status: "locked",
+        icon: "fullLicence",
+        blockedBy: "Pass your CBT first",
+      });
+      if (BIKE_RANK[target] >= BIKE_RANK["midweight"]) {
+        stages.push({
+          key: "a2",
+          title: "Full A2 licence (from 19)",
+          description: "Bikes up to 35kW, no L-plates, passengers and motorways allowed.",
+          status: "locked",
+          icon: "fullLicence",
+          blockedBy: "Turn 19 and pass A1 or CBT route",
+        });
+      }
+    } else if (age === "19-23") {
+      stages.push({
+        key: "a2",
+        title: "Full A2 licence",
+        description: "Bikes up to 35kW, no L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
+        status: "locked",
+        icon: "fullLicence",
+        blockedBy: "Pass your CBT first",
+      });
+      if (target === "unrestricted") {
+        stages.push({
+          key: "a",
+          title: "Full A licence (from 24, or 2 years after A2)",
+          description: "Any bike, any power. The top tier — no restrictions.",
+          status: "locked",
+          icon: "fullLicence",
+          blockedBy: "Turn 24, or hold A2 for 2 years",
+        });
+      }
+    } else if (age === "24+") {
+      stages.push({
+        key: "a",
+        title: "Full A licence (Direct Access)",
+        description: "Any bike, any power, no L-plates. The top tier — needs motorcycle theory + Mod 1 + Mod 2.",
+        status: "locked",
+        icon: "fullLicence",
+        blockedBy: "Pass your CBT first",
+      });
+    }
+  }
+
+  return stages;
+}
+
 type Stage = "age" | "licence" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
 
 const STAGE_ORDER: Stage[] = ["age", "licence", "eligibility", "bikeSize", "passenger", "motorways", "result"];
@@ -469,6 +617,9 @@ export function CourseFinder() {
 
   const roadmap =
     age && aspirations ? roadmapFor(age, aspirations) : [];
+
+  const journey =
+    age && licence ? journeyFor(age, licence, aspirations) : [];
 
   // Module labels shown above the question
   const moduleLabel =
@@ -597,6 +748,7 @@ export function CourseFinder() {
             aspirations={aspirations}
             eligibility={eligibility}
             roadmap={roadmap}
+            journey={journey}
             onBack={back}
             onReset={reset}
           />
@@ -773,6 +925,7 @@ function ResultPanel({
   aspirations,
   eligibility,
   roadmap,
+  journey,
   onBack,
   onReset,
 }: {
@@ -780,6 +933,7 @@ function ResultPanel({
   aspirations: Aspirations | null;
   eligibility: EligibilityCap;
   roadmap: string[];
+  journey: JourneyStage[];
   onBack: () => void;
   onReset: () => void;
 }) {
@@ -802,17 +956,6 @@ function ResultPanel({
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed">{ending.body}</p>
-
-      <ul className="space-y-1.5">
-        {ending.bullets.map((b) => (
-          <li key={b} className="flex items-start gap-2 text-sm">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
-
       {aspirations && hasGap && (
         <div className="rounded-lg border border-accent/40 bg-accent/10 p-4">
           <div className="flex items-start gap-2">
@@ -832,24 +975,18 @@ function ResultPanel({
         </div>
       )}
 
-      {roadmap.length > 0 && (
+      {journey.length > 0 && (
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex items-center gap-2">
             <MapPin className="size-4 text-secondary" />
             <p className="text-xs font-semibold uppercase tracking-wide text-secondary">
-              Your roadmap
+              Your journey, step by step
             </p>
           </div>
-          <ol className="mt-3 space-y-2">
-            {roadmap.map((step, i) => (
-              <li key={step} className="flex items-start gap-3 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary/10 text-xs font-semibold text-secondary">
-                  {i + 1}
-                </span>
-                <span>{step}</span>
-              </li>
-            ))}
-          </ol>
+          <p className="mt-1 text-xs text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+            Each step unlocks the next. You can't skip ahead — for example, you need a CBT before any full A1, A2 or A licence.
+          </p>
+          <JourneyStages stages={journey} />
         </div>
       )}
 
@@ -869,5 +1006,92 @@ function ResultPanel({
         </Button>
       </div>
     </div>
+  );
+}
+
+const JOURNEY_ICON: Record<JourneyStage["icon"], typeof IdCard> = {
+  licence: IdCard,
+  cbt: GraduationCap,
+  bike: Bike,
+  fullLicence: GraduationCap,
+};
+
+function JourneyStages({ stages }: { stages: JourneyStage[] }) {
+  return (
+    <ol className="mt-4 space-y-3">
+      {stages.map((s, i) => {
+        const Icon = JOURNEY_ICON[s.icon];
+        const isDone = s.status === "done";
+        const isNow = s.status === "now";
+        const isLocked = s.status === "locked";
+
+        const containerClasses = isNow
+          ? "border-primary/40 bg-primary/5"
+          : isDone
+          ? "border-border bg-muted/40"
+          : "border-dashed border-border bg-background opacity-75";
+
+        const badge = isDone ? (
+          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <CheckCircle2 className="size-4" />
+          </span>
+        ) : isNow ? (
+          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+            {i + 1}
+          </span>
+        ) : (
+          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground">
+            <Lock className="size-3.5" />
+          </span>
+        );
+
+        const statusPill = isDone ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary" style={{ fontFamily: "var(--font-body)" }}>
+            <CheckCircle2 className="size-3" /> Done
+          </span>
+        ) : isNow ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground" style={{ fontFamily: "var(--font-body)" }}>
+            <Circle className="size-2 fill-current" /> Do this now
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+            <Lock className="size-3" /> Locked
+          </span>
+        );
+
+        return (
+          <li key={s.key} className="relative">
+            {i < stages.length - 1 && (
+              <span
+                aria-hidden
+                className={`absolute left-[26px] top-[44px] h-[calc(100%-20px)] w-px ${
+                  isDone ? "bg-primary/30" : "bg-border"
+                }`}
+              />
+            )}
+            <div className={`flex gap-3 rounded-lg border p-3 ${containerClasses}`}>
+              {badge}
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Icon className={`size-4 shrink-0 ${isLocked ? "text-muted-foreground" : "text-primary"}`} />
+                  <h4 className={`text-sm font-semibold ${isLocked ? "text-muted-foreground" : ""}`}>
+                    Step {i + 1}: {s.title}
+                  </h4>
+                  {statusPill}
+                </div>
+                <p className={`mt-1 text-xs leading-relaxed ${isLocked ? "text-muted-foreground" : "text-foreground/80"}`} style={{ fontFamily: "var(--font-body)" }}>
+                  {s.description}
+                </p>
+                {isLocked && s.blockedBy && (
+                  <p className="mt-1.5 text-[11px] font-medium text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+                    🔒 Unlocks after: {s.blockedBy}
+                  </p>
+                )}
+              </div>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
