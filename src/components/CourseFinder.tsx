@@ -151,7 +151,8 @@ const CTA_LABEL: Record<CtaKind, string> = {
   convert: "Convert licence",
 };
 
-// What each age band unlocks at the top of the licence ladder (after training)
+// What each age band can do RIGHT NOW (today, after a CBT). The licence ladder
+// (A1/A2/A) belongs in the refine/roadmap step, not here.
 function eligibilityFor(age: AgeBand): EligibilityCap {
   switch (age) {
     case "16":
@@ -159,32 +160,32 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "moped",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "At 16 you can ride a 50cc moped on a CBT — no passengers, no motorways.",
-        chips: ["CBT", "50cc moped"],
+        summary: "Today, a CBT lets you ride a 50cc moped on the road under L-plates.",
+        chips: ["CBT", "50cc moped", "L-plates"],
       };
     case "17-18":
       return {
         maxBikeNow: "125",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "At 17–18 you can CBT onto a 125cc, then take a full A1 licence to drop the L-plates.",
-        chips: ["CBT", "125cc (11kW)", "A1 licence"],
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        chips: ["CBT", "125cc", "L-plates"],
       };
     case "19-23":
       return {
         maxBikeNow: "midweight",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "At 19–23 you can CBT onto a 125cc, then take a full A2 licence — bikes up to 35kW.",
-        chips: ["CBT", "125cc (11kW)", "A2 licence (up to 35kW)"],
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        chips: ["CBT", "125cc", "L-plates"],
       };
     case "24+":
       return {
         maxBikeNow: "unrestricted",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "At 24+ you can CBT onto a 125cc, then go straight to a full A licence — any bike, no power cap.",
-        chips: ["CBT", "125cc (11kW)", "Full A licence (any power)"],
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        chips: ["CBT", "125cc", "L-plates"],
       };
   }
 }
