@@ -263,9 +263,9 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "G",
     cta: "cbt",
     title: "You're ready to book your CBT",
-    body: "Your full UK car licence acts as your provisional for motorcycles. A CBT lets you ride a 125cc straight away.",
+    body: "A CBT is your entry point — it acts like a provisional for motorcycles and lets you ride a 125cc straight after.",
     bullets: [
-      "No separate provisional needed",
+      "1-day CBT course, bike and fuel included",
       "Ride up to 125cc (11kW) under L-plates",
       "A1 licence available — removes L-plates and restrictions",
     ],
@@ -285,9 +285,9 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "K",
     cta: "cbt",
     title: "You're ready to book your CBT",
-    body: "Your UK car licence acts as your provisional for motorcycles. A CBT gets you on a 125cc, with the A2 licence as your next step.",
+    body: "A CBT is your entry point — it acts like a provisional for motorcycles and gets you on a 125cc, with the A2 licence as your next step.",
     bullets: [
-      "No separate provisional needed",
+      "1-day CBT course, bike and fuel included",
       "Ride up to 125cc (11kW) under L-plates",
       "A2 licence available — bikes up to 35kW",
     ],
