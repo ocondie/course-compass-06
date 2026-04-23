@@ -23,7 +23,7 @@ function Index() {
           Course Finder
         </p>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Not sure which course you need?
+          What training do I need?
         </h1>
         <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
           Answer a few quick questions and we'll point you to the right motorcycle training for you.
