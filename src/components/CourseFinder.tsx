@@ -9,6 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   ArrowLeft,
   RotateCcw,
@@ -22,6 +27,7 @@ import {
   IdCard,
   Bike,
   GraduationCap,
+  Loader2,
 } from "lucide-react";
 
 type AgeBand = "16" | "17-18" | "19-23" | "24+";
@@ -55,15 +61,10 @@ type Aspirations = {
 
 // What an age/licence combo currently unlocks
 type EligibilityCap = {
-  // highest engine/power they can ride right now (after CBT etc.)
   maxBikeNow: BikeSize;
-  // can they carry a passenger now?
   passengerNow: boolean;
-  // can they use motorways now?
   motorwaysNow: boolean;
-  // short summary line for the interim eligibility card
   summary: string;
-  // what's eligible for them as a list of chips
   chips: string[];
 };
 
@@ -154,6 +155,13 @@ const CTA_LABEL: Record<CtaKind, string> = {
   provisional: "Apply for provisional",
   cbt: "Book CBT",
   convert: "Convert licence",
+};
+
+// URLs the outcome CTAs send the user to.
+const CTA_URL: Record<CtaKind, string | null> = {
+  provisional: "https://www.gov.uk/apply-first-provisional-driving-licence",
+  convert: "https://www.gov.uk/exchange-nongb-driving-licence",
+  cbt: null, // "Book CBT" just closes the dialog — user is already on the booking page.
 };
 
 // What each age band can do RIGHT NOW (today, after a CBT). The licence ladder
@@ -543,9 +551,72 @@ function journeyFor(
   return stages;
 }
 
-type Stage = "age" | "licence" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
+// Capture form sits between the licence question and the eligibility summary.
+type Stage = "age" | "licence" | "capture" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
 
-const STAGE_ORDER: Stage[] = ["age", "licence", "eligibility", "bikeSize", "passenger", "motorways", "result"];
+const STAGE_ORDER: Stage[] = ["age", "licence", "capture", "eligibility", "bikeSize", "passenger", "motorways", "result"];
+
+// --- HubSpot Forms API plumbing ---------------------------------------------
+
+const HUBSPOT_PORTAL_ID = "4630320";
+const HUBSPOT_FORM_GUID = "0a690e83-b872-4202-9f5d-86e7acd632fe";
+const HUBSPOT_SUBMIT_URL = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_GUID}`;
+
+type HsField = { name: string; value: string };
+
+async function submitToHubspot(fields: HsField[]): Promise<void> {
+  const res = await fetch(HUBSPOT_SUBMIT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fields,
+      context: {
+        pageUri: typeof window !== "undefined" ? window.location.href : "",
+        pageName: "RideTo Course Finder",
+      },
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`HubSpot Forms API ${res.status}: ${await res.text()}`);
+  }
+}
+
+async function submitCaptureToHubspot(
+  values: { firstName: string; lastName: string; email: string },
+  age: AgeBand,
+  licence: Licence,
+): Promise<void> {
+  await submitToHubspot([
+    { name: "firstname", value: values.firstName },
+    { name: "lastname", value: values.lastName },
+    { name: "email", value: values.email },
+    { name: "getting_started_age_bracket", value: age },
+    { name: "current_licence", value: licence },
+  ]);
+}
+
+async function submitPersonalisationToHubspot(
+  email: string,
+  answers: {
+    bikeSize: BikeSize | null;
+    passenger: YesNoUnsure | null;
+    motorways: YesNoUnsure | null;
+  },
+): Promise<void> {
+  const fields: HsField[] = [{ name: "email", value: email }];
+  if (answers.bikeSize)
+    fields.push({ name: "getting_started_bike_size_want", value: answers.bikeSize });
+  if (answers.passenger)
+    fields.push({ name: "getting_started_passengers_need", value: answers.passenger });
+  if (answers.motorways)
+    fields.push({ name: "getting_started_motorways", value: answers.motorways });
+  // Only fire if we have something to update beyond the email.
+  if (fields.length > 1) {
+    await submitToHubspot(fields);
+  }
+}
+
+// ----------------------------------------------------------------------------
 
 type CourseFinderProps = {
   /** Controlled open state. If provided, parent owns open/close. */
@@ -573,6 +644,11 @@ export function CourseFinder({
   const [bikeSize, setBikeSize] = useState<BikeSize | null>(null);
   const [passenger, setPassenger] = useState<YesNoUnsure | null>(null);
   const [motorways, setMotorways] = useState<YesNoUnsure | null>(null);
+  const [contact, setContact] = useState<{
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null>(null);
 
   const reset = () => {
     setStage("age");
@@ -581,6 +657,7 @@ export function CourseFinder({
     setBikeSize(null);
     setPassenger(null);
     setMotorways(null);
+    setContact(null);
   };
 
   const back = () => {
@@ -603,7 +680,7 @@ export function CourseFinder({
 
   const handleLicence = (value: Licence) => {
     setLicence(value);
-    setStage("eligibility");
+    setStage("capture");
   };
 
   const handleBikeSize = (value: BikeSize) => {
@@ -618,13 +695,35 @@ export function CourseFinder({
 
   const handleMotorways = (value: YesNoUnsure) => {
     setMotorways(value);
+    // Fire-and-forget update of personalisation answers — user moves
+    // straight to the recommendation, no waiting, no loader.
+    if (contact) {
+      void submitPersonalisationToHubspot(contact.email, {
+        bikeSize,
+        passenger,
+        motorways: value,
+      }).catch((err) => {
+        console.error("HubSpot personalisation update failed", err);
+      });
+    }
     setStage("result");
   };
 
-  const progress = ((STAGE_ORDER.indexOf(stage) + 1) / STAGE_ORDER.length) * 100;
-
   const ending: Ending | null =
     age && licence ? ENDINGS[ENDING_MAP[`${age}|${licence}`]] : null;
+
+  // Outcome CTA — closes the dialog, and for provisional/convert also
+  // opens the relevant GOV.UK page in a new tab.
+  const handleCtaClick = () => {
+    if (!ending) return;
+    const url = CTA_URL[ending.cta];
+    if (url && typeof window !== "undefined") {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+    setOpen(false);
+  };
+
+  const progress = ((STAGE_ORDER.indexOf(stage) + 1) / STAGE_ORDER.length) * 100;
 
   const eligibility = age ? eligibilityFor(age) : null;
 
@@ -643,6 +742,8 @@ export function CourseFinder({
   const moduleLabel =
     stage === "age" || stage === "licence"
       ? "Step 1 of 2 · Eligibility"
+      : stage === "capture"
+      ? "Almost there"
       : stage === "eligibility"
       ? "Eligibility check"
       : stage === "bikeSize" || stage === "passenger" || stage === "motorways"
@@ -708,12 +809,26 @@ export function CourseFinder({
           />
         )}
 
+        {stage === "capture" && age && licence && (
+          <LeadCapturePanel
+            age={age}
+            licence={licence}
+            onSubmitted={(values) => {
+              setContact(values);
+              setStage("eligibility");
+            }}
+            onBack={back}
+            onReset={reset}
+          />
+        )}
+
         {stage === "eligibility" && eligibility && ending && (
           <EligibilityPanel
             eligibility={eligibility}
             ending={ending}
             onContinue={() => setStage("bikeSize")}
             onSkip={skipAspirations}
+            onCtaClick={handleCtaClick}
             onBack={back}
             onReset={reset}
           />
@@ -769,6 +884,7 @@ export function CourseFinder({
             eligibility={eligibility}
             roadmap={roadmap}
             journey={journey}
+            onCtaClick={handleCtaClick}
             onBack={back}
             onReset={reset}
           />
@@ -851,11 +967,143 @@ function QuestionPanel({
   );
 }
 
+// --- Lead-capture panel (first HubSpot submission) --------------------------
+
+const captureSchema = z.object({
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
+  email: z.string().trim().email("Enter a valid email"),
+});
+
+type CaptureValues = z.infer<typeof captureSchema>;
+
+function LeadCapturePanel({
+  age,
+  licence,
+  onSubmitted,
+  onBack,
+  onReset,
+}: {
+  age: AgeBand;
+  licence: Licence;
+  onSubmitted: (values: CaptureValues) => void;
+  onBack: () => void;
+  onReset: () => void;
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CaptureValues>({
+    resolver: zodResolver(captureSchema),
+    defaultValues: { firstName: "", lastName: "", email: "" },
+  });
+
+  const onSubmit = handleSubmit(async (values) => {
+    try {
+      await submitCaptureToHubspot(values, age, licence);
+    } catch (err) {
+      // Per spec: log but never block the user.
+      console.error("HubSpot lead capture failed", err);
+    }
+    onSubmitted(values);
+  });
+
+  return (
+    <form onSubmit={onSubmit} className="mt-4 space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold text-foreground">
+          Where should we send your recommendation?
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          We'll save your answers so you can pick up where you left off.
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="firstName">First name</Label>
+          <Input
+            id="firstName"
+            autoComplete="given-name"
+            disabled={isSubmitting}
+            {...register("firstName")}
+          />
+          {errors.firstName && (
+            <p className="text-xs text-destructive">{errors.firstName.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="lastName">Last name</Label>
+          <Input
+            id="lastName"
+            autoComplete="family-name"
+            disabled={isSubmitting}
+            {...register("lastName")}
+          />
+          {errors.lastName && (
+            <p className="text-xs text-destructive">{errors.lastName.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            disabled={isSubmitting}
+            {...register("email")}
+          />
+          {errors.email && (
+            <p className="text-xs text-destructive">{errors.email.message}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 pt-2">
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            disabled={isSubmitting}
+            className="gap-1"
+          >
+            <ArrowLeft className="size-4" />
+            Back
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onReset}
+            disabled={isSubmitting}
+            className="gap-1"
+          >
+            <RotateCcw className="size-4" />
+            Start again
+          </Button>
+        </div>
+        <Button type="submit" disabled={isSubmitting} className="gap-2">
+          {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+          {isSubmitting ? "Saving…" : "Continue"}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+// ---------------------------------------------------------------------------
+
 function EligibilityPanel({
   eligibility,
   ending,
   onContinue,
   onSkip,
+  onCtaClick,
   onBack,
   onReset,
 }: {
@@ -863,6 +1111,7 @@ function EligibilityPanel({
   ending: Ending;
   onContinue: () => void;
   onSkip: () => void;
+  onCtaClick: () => void;
   onBack: () => void;
   onReset: () => void;
 }) {
@@ -975,6 +1224,7 @@ function ResultPanel({
   eligibility,
   roadmap,
   journey,
+  onCtaClick,
   onBack,
   onReset,
 }: {
@@ -983,6 +1233,7 @@ function ResultPanel({
   eligibility: EligibilityCap;
   roadmap: string[];
   journey: JourneyStage[];
+  onCtaClick: () => void;
   onBack: () => void;
   onReset: () => void;
 }) {
@@ -1050,7 +1301,7 @@ function ResultPanel({
             Start over
           </Button>
         </div>
-        <Button size="lg" className="sm:min-w-44">
+        <Button size="lg" className="sm:min-w-44" onClick={onCtaClick}>
           {CTA_LABEL[ending.cta]}
         </Button>
       </div>
