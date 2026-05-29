@@ -71,10 +71,10 @@ type EligibilityCap = {
 };
 
 const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
-  { value: "16", label: "16", help: "Moped only — 50cc / 28mph on a CBT" },
-  { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) on a CBT — A1 licence possible after CBT" },
-  { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) on a CBT — A2 licence possible after CBT" },
-  { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) on a CBT — full A licence (any power) possible after CBT" },
+  { value: "16", label: "16" },
+  { value: "17-18", label: "17–18" },
+  { value: "19-23", label: "19–23" },
+  { value: "24+", label: "24 or older" },
 ];
 
 // Per-age licence options (16-year-olds can't yet hold a UK driving licence)
@@ -83,36 +83,37 @@ const LICENCE_OPTIONS: Record<
   { value: Licence; label: string; help?: string }[]
 > = {
   "16": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
   ],
   "17-18": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
-    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "19-23": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
-    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "24+": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
-    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
 };
 
 const BIKE_SIZE_OPTIONS: { value: BikeSize; label: string; help: string }[] = [
-  { value: "moped", label: "Just a 50cc moped", help: "City runabout, 28mph max" },
-  { value: "125", label: "A 125cc commuter", help: "Up to 11kW — typical learner bike" },
-  { value: "midweight", label: "A midweight bike (up to 35kW)", help: "A2 territory — most popular roadbikes restricted" },
-  { value: "unrestricted", label: "Anything I like — no restrictions", help: "Full A — sportbikes, big tourers, no power cap" },
+  { value: "moped", label: "A 50cc moped", help: "A small scooter, 28mph max" },
+  { value: "125", label: "A 125cc commuter", help: "An entry level bike, up to 11kW" },
+  { value: "midweight", label: "A midweight bike (up to 35kW)", help: "A2 friendly bikes" },
+  { value: "unrestricted", label: "Anything I like — no restrictions", help: "Any bike, no power cap" },
 ];
+
 
 const YES_NO_UNSURE: { value: YesNoUnsure; label: string }[] = [
   { value: "yes", label: "Yes" },
