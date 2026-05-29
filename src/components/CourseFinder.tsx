@@ -1127,7 +1127,7 @@ function EligibilityPanel({
   const blockerIntro =
     ending.cta === "provisional"
       ? "We can't book you onto any motorcycle training until you hold a UK provisional driving licence."
-      : "A non-UK licence doesn't give you motorcycle entitlement in the UK, so you can't book training on it directly.";
+      : "A non-UK licence doesn't give you motorcycle entitlement in the UK, so you can't book training yet.";
   const blockerSteps =
     ending.cta === "provisional"
       ? [
@@ -1138,7 +1138,6 @@ function EligibilityPanel({
       : [
           "EU/EEA licence: you can usually exchange it for a UK licence on GOV.UK, or apply for a UK provisional alongside it",
           "Non-EU licence: if you've recently become a UK resident, you have 12 months to exchange it — otherwise you'll need a UK provisional",
-          "Once you hold a UK provisional (or exchanged licence), you're cleared to book your CBT",
         ];
 
   return (
@@ -1179,13 +1178,16 @@ function EligibilityPanel({
               <>
                 You're in the right place — you're ready to book your <strong>CBT</strong>, and ride up to a 125cc.
               </>
+            ) : ending.cta === "convert" ? (
+              <>
+                Once you have exchanged your licence, you're cleared to book your <strong>CBT</strong>, which {eligibility.summary.replace("Today, a CBT ", "")}
+              </>
             ) : (
               eligibility.summary
             )}
           </p>
         </div>
       </div>
-
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
           Want a fully refined plan?
