@@ -1263,16 +1263,6 @@ function ResultPanel({
 
   return (
     <div className="space-y-5 py-2">
-      <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4">
-        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-            Your next step
-          </p>
-          <h3 className="mt-1 text-xl font-semibold">{ending.title}</h3>
-        </div>
-      </div>
-
       {aspirations && hasGap && (
         <div className="rounded-lg border border-accent/40 bg-accent/10 p-4">
           <div className="flex items-start gap-2">
