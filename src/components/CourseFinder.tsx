@@ -28,7 +28,9 @@ import {
   Bike,
   GraduationCap,
   Loader2,
+  Compass,
 } from "lucide-react";
+
 
 type AgeBand = "16" | "17-18" | "19-23" | "24+";
 type Licence = "none" | "uk-provisional" | "non-uk" | "uk-driving";
@@ -69,10 +71,10 @@ type EligibilityCap = {
 };
 
 const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
-  { value: "16", label: "16", help: "Moped only — 50cc / 28mph on a CBT" },
-  { value: "17-18", label: "17–18", help: "Up to 125cc (11kW) on a CBT — A1 licence possible after CBT" },
-  { value: "19-23", label: "19–23", help: "Up to 125cc (11kW) on a CBT — A2 licence possible after CBT" },
-  { value: "24+", label: "24 or older", help: "Up to 125cc (11kW) on a CBT — full A licence (any power) possible after CBT" },
+  { value: "16", label: "16" },
+  { value: "17-18", label: "17–18" },
+  { value: "19-23", label: "19–23" },
+  { value: "24+", label: "24 or older" },
 ];
 
 // Per-age licence options (16-year-olds can't yet hold a UK driving licence)
@@ -81,36 +83,37 @@ const LICENCE_OPTIONS: Record<
   { value: Licence; label: string; help?: string }[]
 > = {
   "16": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
   ],
   "17-18": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
-    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "19-23": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
-    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
   "24+": [
-    { value: "none", label: "I don't have any kind of driving licence", help: "No problem — we'll get you a provisional sorted as part of the process" },
-    { value: "uk-provisional", label: "UK provisional driving licence", help: "Perfect — covers you for a CBT straight away" },
-    { value: "non-uk", label: "Non-UK driving licence", help: "Usually fine for a CBT — we'll double-check on booking" },
-    { value: "uk-driving", label: "UK full car driving licence", help: "You're set — your licence covers the CBT entitlement" },
+    { value: "none", label: "I don't have any kind of driving licence" },
+    { value: "uk-provisional", label: "UK provisional driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
+    { value: "uk-driving", label: "UK full car driving licence" },
   ],
 };
 
 const BIKE_SIZE_OPTIONS: { value: BikeSize; label: string; help: string }[] = [
-  { value: "moped", label: "Just a 50cc moped", help: "City runabout, 28mph max" },
-  { value: "125", label: "A 125cc commuter", help: "Up to 11kW — typical learner bike" },
-  { value: "midweight", label: "A midweight bike (up to 35kW)", help: "A2 territory — most popular roadbikes restricted" },
-  { value: "unrestricted", label: "Anything I like — no restrictions", help: "Full A — sportbikes, big tourers, no power cap" },
+  { value: "moped", label: "A 50cc moped", help: "A small scooter, 28mph max" },
+  { value: "125", label: "A 125cc commuter", help: "An entry level bike, up to 11kW" },
+  { value: "midweight", label: "A midweight bike (up to 35kW)", help: "A2 friendly bikes" },
+  { value: "unrestricted", label: "Anything I like — no restrictions", help: "Any bike, no power cap" },
 ];
+
 
 const YES_NO_UNSURE: { value: YesNoUnsure; label: string }[] = [
   { value: "yes", label: "Yes" },
@@ -173,7 +176,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "moped",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 50cc moped on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 50cc moped on the road with L-plates.",
         chips: ["CBT", "50cc moped", "L-plates"],
       };
     case "17-18":
@@ -181,7 +184,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "125",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
         chips: ["CBT", "125cc", "L-plates"],
       };
     case "19-23":
@@ -189,7 +192,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "midweight",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
         chips: ["CBT", "125cc", "L-plates"],
       };
     case "24+":
@@ -197,7 +200,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "unrestricted",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
         chips: ["CBT", "125cc", "L-plates"],
       };
   }
@@ -255,7 +258,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "B",
     cta: "cbt",
     title: "You're ready to book your CBT",
-    body: "Your UK provisional covers you to take a CBT. One day of training and you can ride a 50cc on the road under L-plates.",
+    body: "Your UK provisional covers you to take a CBT. One day of training and you can ride a 50cc on the road with L-plates.",
     bullets: [
       "1-day course (6–8 hours), bike and fuel included",
       "At 16 you're restricted to 50cc / 28mph",
@@ -269,7 +272,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "Your UK provisional covers you for a CBT. After one day of training you can ride a 125cc on the road.",
     bullets: [
       "1-day course (6–8 hours), bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "Valid for 2 years — then renew or take a full licence",
     ],
   },
@@ -280,7 +283,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "A CBT is your entry point — it acts like a provisional for motorcycles and lets you ride a 125cc straight after.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "A1 licence available — removes L-plates and restrictions",
     ],
   },
@@ -292,7 +295,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "1-day CBT course, bike and fuel included",
       "A2 licence route available — bikes up to 35kW",
-      "Valid for 2 years on a 125cc under L-plates",
+      "Valid for 2 years on a 125cc with L-plates",
     ],
   },
   K: {
@@ -302,7 +305,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "A CBT is your entry point — it acts like a provisional for motorcycles and gets you on a 125cc, with the A2 licence as your next step.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "A2 licence available — bikes up to 35kW",
     ],
   },
@@ -314,7 +317,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "1-day CBT course, bike and fuel included",
       "Full A licence route available — any power",
-      "Valid for 2 years on a 125cc under L-plates",
+      "Valid for 2 years on a 125cc with L-plates",
     ],
   },
   O: {
@@ -324,7 +327,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "A CBT is your starting point — it acts like a provisional for motorcycles. At 24+ you can also work towards a full A licence with no power restrictions.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "Full A licence route available — any power",
     ],
   },
@@ -470,8 +473,8 @@ function journeyFor(
     title: "Compulsory Basic Training (CBT)",
     description:
       age === "16"
-        ? "One day of training. Lets you ride a 50cc moped on the road under L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence."
-        : "One day of training. Lets you ride up to 125cc (14.8HP) on the road under L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence.",
+        ? "One day of training. Lets you ride a 50cc moped on the road with L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence."
+        : "One day of training. Lets you ride up to 125cc (14.8HP) on the road with L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence.",
     status: cbtStatus,
     icon: "cbt",
     blockedBy: cbtStatus === "locked" ? "UK provisional licence" : undefined,
@@ -851,8 +854,8 @@ export function CourseFinder({
 
         {stage === "passenger" && (
           <QuestionPanel
-            question="Do you want to carry a passenger?"
-            help="Pillion riding needs a full licence — not allowed on a CBT."
+            question="Will you ever need to carry a passenger on your bike?"
+            help="Not all licence types allow you to have a pillion."
             options={YES_NO_UNSURE.map((o) => ({
               key: o.value,
               label: o.label,
@@ -865,8 +868,8 @@ export function CourseFinder({
 
         {stage === "motorways" && (
           <QuestionPanel
-            question="Do you want to use motorways?"
-            help="Motorways need a full licence — CBT-only riders can't use them."
+            question="Do you want to ride on motorways?"
+            help="Motorways are often the quickest route somewhere, but not all licence types allow you to ride on them."
             options={YES_NO_UNSURE.map((o) => ({
               key: o.value,
               label: o.label,
@@ -876,6 +879,7 @@ export function CourseFinder({
             onReset={reset}
           />
         )}
+
 
         {stage === "result" && ending && eligibility && (
           <ResultPanel
@@ -1164,43 +1168,56 @@ function EligibilityPanel({
         </div>
       )}
 
-      <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4">
-        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
+      <div className="flex items-start gap-4 rounded-lg border border-primary/20 bg-primary/5 p-5">
+        <ShieldCheck className="mt-0.5 size-6 shrink-0 text-primary" />
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
             {isBlocked ? "Here's what you could book" : "Here's what you can do"}
           </p>
-          <p className="mt-1 text-sm leading-relaxed">{eligibility.summary}</p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {eligibility.chips.map((chip) => (
-              <span
-                key={chip}
-                className="inline-flex items-center rounded-full border border-primary/30 bg-background px-2.5 py-0.5 text-xs font-medium text-primary"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                {chip}
-              </span>
-            ))}
-          </div>
+          <p className="mt-2 text-base leading-relaxed">
+            {ending.cta === "cbt" ? (
+              <>
+                You're in the right place — you're ready to book your <strong>CBT</strong>, and ride up to a 125cc.
+              </>
+            ) : (
+              eligibility.summary
+            )}
+          </p>
         </div>
       </div>
 
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
-          Want a tailored recommendation?
+          Want a fully refined plan?
         </p>
         <p className="mt-1 text-sm text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
           Three more questions about the bike you actually want to ride and we'll match you to the right course — and show you the roadmap if you're aiming higher than your age allows today.
         </p>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-          <Button onClick={onContinue} className="sm:flex-1">
-            Yes, refine for me
-          </Button>
-          <Button variant="outline" onClick={onSkip} className="sm:flex-1">
-            Just show me {CTA_LABEL[ending.cta].toLowerCase()}
-          </Button>
+          {ending.cta === "cbt" ? (
+            <>
+              <Button onClick={onCtaClick} className="gap-2 sm:flex-1">
+                <Compass className="size-4" />
+                Book CBT now
+              </Button>
+              <Button variant="outline" onClick={onContinue} className="sm:flex-1">
+                Yes, refine for me
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={onContinue} className="sm:flex-1">
+                Yes, refine for me
+              </Button>
+              <Button variant="outline" onClick={onCtaClick} className="gap-2 sm:flex-1">
+                <Compass className="size-4" />
+                {ending.cta === "provisional" ? "Apply for provisional" : "Convert licence"}
+              </Button>
+            </>
+          )}
         </div>
       </div>
+
 
       <div className="flex items-center justify-between pt-2">
         <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
@@ -1246,16 +1263,6 @@ function ResultPanel({
 
   return (
     <div className="space-y-5 py-2">
-      <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4">
-        <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-            Your next step
-          </p>
-          <h3 className="mt-1 text-xl font-semibold">{ending.title}</h3>
-        </div>
-      </div>
-
       {aspirations && hasGap && (
         <div className="rounded-lg border border-accent/40 bg-accent/10 p-4">
           <div className="flex items-start gap-2">
@@ -1283,9 +1290,6 @@ function ResultPanel({
               Your journey, step by step
             </p>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
-            Each step unlocks the next. You can't skip ahead — for example, you need a CBT before any full A1, A2 or A licence.
-          </p>
           <JourneyStages stages={journey} />
         </div>
       )}
