@@ -28,7 +28,9 @@ import {
   Bike,
   GraduationCap,
   Loader2,
+  Compass,
 } from "lucide-react";
+
 
 type AgeBand = "16" | "17-18" | "19-23" | "24+";
 type Licence = "none" | "uk-provisional" | "non-uk" | "uk-driving";
