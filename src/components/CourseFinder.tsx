@@ -29,6 +29,7 @@ import {
   GraduationCap,
   Loader2,
   Compass,
+  ArrowUpRight,
 } from "lucide-react";
 
 
