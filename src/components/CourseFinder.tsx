@@ -1182,10 +1182,9 @@ function EligibilityPanel({
               <>
                 Once you have exchanged your licence, you're cleared to book your <strong>CBT</strong>, which {eligibility.summary.replace("Today, a CBT ", "")}
               </>
+            ) : (
               eligibility.summary
             )}
-          </p>
-        </div>
       </div>
 
       <div className="rounded-lg border border-border bg-card p-4">
