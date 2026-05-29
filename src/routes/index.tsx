@@ -26,14 +26,12 @@ function Index() {
           What training do I need?
         </h1>
         <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-          Answer a few quick questions and we'll point you to the right motorcycle training for you.
+          A few quick questions and we'll match you to the right training.
         </p>
         <div className="mt-8">
           <CourseFinder />
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">
-          Takes under a minute · 5 courses · UK-wide
-        </p>
+
       </section>
     </main>
   );
