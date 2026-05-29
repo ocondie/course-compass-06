@@ -1168,43 +1168,56 @@ function EligibilityPanel({
         </div>
       )}
 
-      <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4">
-        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" />
+      <div className="flex items-start gap-4 rounded-lg border border-primary/20 bg-primary/5 p-5">
+        <ShieldCheck className="mt-0.5 size-6 shrink-0 text-primary" />
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
             {isBlocked ? "Here's what you could book" : "Here's what you can do"}
           </p>
-          <p className="mt-1 text-sm leading-relaxed">{eligibility.summary}</p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {eligibility.chips.map((chip) => (
-              <span
-                key={chip}
-                className="inline-flex items-center rounded-full border border-primary/30 bg-background px-2.5 py-0.5 text-xs font-medium text-primary"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                {chip}
-              </span>
-            ))}
-          </div>
+          <p className="mt-2 text-base leading-relaxed">
+            {ending.cta === "cbt" ? (
+              <>
+                You're in the right place — you're ready to book your <strong>CBT</strong>, and ride up to a 125cc.
+              </>
+            ) : (
+              eligibility.summary
+            )}
+          </p>
         </div>
       </div>
 
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
-          Want a tailored recommendation?
+          Want a fully refined plan?
         </p>
         <p className="mt-1 text-sm text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
           Three more questions about the bike you actually want to ride and we'll match you to the right course — and show you the roadmap if you're aiming higher than your age allows today.
         </p>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-          <Button onClick={onContinue} className="sm:flex-1">
-            Yes, refine for me
-          </Button>
-          <Button variant="outline" onClick={onSkip} className="sm:flex-1">
-            Just show me {CTA_LABEL[ending.cta].toLowerCase()}
-          </Button>
+          {ending.cta === "cbt" ? (
+            <>
+              <Button onClick={onCtaClick} className="gap-2 sm:flex-1">
+                <Compass className="size-4" />
+                Book CBT now
+              </Button>
+              <Button variant="outline" onClick={onContinue} className="sm:flex-1">
+                Yes, refine for me
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={onContinue} className="sm:flex-1">
+                Yes, refine for me
+              </Button>
+              <Button variant="outline" onClick={onCtaClick} className="gap-2 sm:flex-1">
+                <Compass className="size-4" />
+                {ending.cta === "provisional" ? "Apply for provisional" : "Convert licence"}
+              </Button>
+            </>
+          )}
         </div>
       </div>
+
 
       <div className="flex items-center justify-between pt-2">
         <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
