@@ -176,7 +176,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "moped",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 50cc moped on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 50cc moped on the road with L-plates.",
         chips: ["CBT", "50cc moped", "L-plates"],
       };
     case "17-18":
@@ -184,7 +184,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "125",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
         chips: ["CBT", "125cc", "L-plates"],
       };
     case "19-23":
@@ -192,7 +192,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "midweight",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
         chips: ["CBT", "125cc", "L-plates"],
       };
     case "24+":
@@ -200,7 +200,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
         maxBikeNow: "unrestricted",
         passengerNow: false,
         motorwaysNow: false,
-        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road under L-plates.",
+        summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
         chips: ["CBT", "125cc", "L-plates"],
       };
   }
@@ -258,7 +258,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     id: "B",
     cta: "cbt",
     title: "You're ready to book your CBT",
-    body: "Your UK provisional covers you to take a CBT. One day of training and you can ride a 50cc on the road under L-plates.",
+    body: "Your UK provisional covers you to take a CBT. One day of training and you can ride a 50cc on the road with L-plates.",
     bullets: [
       "1-day course (6–8 hours), bike and fuel included",
       "At 16 you're restricted to 50cc / 28mph",
@@ -272,7 +272,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "Your UK provisional covers you for a CBT. After one day of training you can ride a 125cc on the road.",
     bullets: [
       "1-day course (6–8 hours), bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "Valid for 2 years — then renew or take a full licence",
     ],
   },
@@ -283,7 +283,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "A CBT is your entry point — it acts like a provisional for motorcycles and lets you ride a 125cc straight after.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "A1 licence available — removes L-plates and restrictions",
     ],
   },
@@ -295,7 +295,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "1-day CBT course, bike and fuel included",
       "A2 licence route available — bikes up to 35kW",
-      "Valid for 2 years on a 125cc under L-plates",
+      "Valid for 2 years on a 125cc with L-plates",
     ],
   },
   K: {
@@ -305,7 +305,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "A CBT is your entry point — it acts like a provisional for motorcycles and gets you on a 125cc, with the A2 licence as your next step.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "A2 licence available — bikes up to 35kW",
     ],
   },
@@ -317,7 +317,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     bullets: [
       "1-day CBT course, bike and fuel included",
       "Full A licence route available — any power",
-      "Valid for 2 years on a 125cc under L-plates",
+      "Valid for 2 years on a 125cc with L-plates",
     ],
   },
   O: {
@@ -327,7 +327,7 @@ const ENDINGS: Record<EndingId, Ending> = {
     body: "A CBT is your starting point — it acts like a provisional for motorcycles. At 24+ you can also work towards a full A licence with no power restrictions.",
     bullets: [
       "1-day CBT course, bike and fuel included",
-      "Ride up to 125cc (11kW) under L-plates",
+      "Ride up to 125cc (11kW) with L-plates",
       "Full A licence route available — any power",
     ],
   },
@@ -473,8 +473,8 @@ function journeyFor(
     title: "Compulsory Basic Training (CBT)",
     description:
       age === "16"
-        ? "One day of training. Lets you ride a 50cc moped on the road under L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence."
-        : "One day of training. Lets you ride up to 125cc (14.8HP) on the road under L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence.",
+        ? "One day of training. Lets you ride a 50cc moped on the road with L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence."
+        : "One day of training. Lets you ride up to 125cc (14.8HP) on the road with L-plates — no passengers, no motorways. Valid 2 years. Required before any A1, A2 or full A licence.",
     status: cbtStatus,
     icon: "cbt",
     blockedBy: cbtStatus === "locked" ? "UK provisional licence" : undefined,
