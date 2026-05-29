@@ -29,6 +29,7 @@ import {
   GraduationCap,
   Loader2,
   Compass,
+  ArrowUpRight,
 } from "lucide-react";
 
 
@@ -1166,6 +1167,7 @@ function EligibilityPanel({
               <div className="mt-4">
                 <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
                   Convert licence
+                  <ArrowUpRight className="size-4" />
                 </Button>
               </div>
             )}
@@ -1197,6 +1199,7 @@ function EligibilityPanel({
             ) : (
               <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
                 Apply for provisional
+                <ArrowUpRight className="size-4" />
               </Button>
             )}
           </div>
