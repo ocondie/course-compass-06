@@ -849,13 +849,10 @@ export function CourseFinder({
             }))}
             onBack={back}
             onReset={reset}
-          />
-        )}
-
         {stage === "passenger" && (
           <QuestionPanel
-            question="Do you want to carry a passenger?"
-            help="Pillion riding needs a full licence — not allowed on a CBT."
+            question="Will you ever need to carry a passenger on your bike?"
+            help="Not all licence types allow you to have a pillion."
             options={YES_NO_UNSURE.map((o) => ({
               key: o.value,
               label: o.label,
@@ -868,14 +865,18 @@ export function CourseFinder({
 
         {stage === "motorways" && (
           <QuestionPanel
-            question="Do you want to use motorways?"
-            help="Motorways need a full licence — CBT-only riders can't use them."
+            question="Do you want to ride on motorways?"
+            help="Motorways are often the quickest route somewhere, but not all licence types allow you to ride on them."
             options={YES_NO_UNSURE.map((o) => ({
               key: o.value,
               label: o.label,
               onSelect: () => handleMotorways(o.value),
             }))}
             onBack={back}
+            onReset={reset}
+          />
+        )}
+
             onReset={reset}
           />
         )}
