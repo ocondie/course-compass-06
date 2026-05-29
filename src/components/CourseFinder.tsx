@@ -1180,9 +1180,8 @@ function EligibilityPanel({
               </>
             ) : ending.cta === "convert" ? (
               <>
-                Once you have exchanged your licence, you're cleared to book your <strong>CBT</strong>, which {eligibility.summary.replace("Today, a CBT lets you ", "")}
+                Once you have exchanged your licence, you're cleared to book your <strong>CBT</strong>, which {eligibility.summary.replace("Today, a CBT ", "")}
               </>
-            ) : (
               eligibility.summary
             )}
           </p>
