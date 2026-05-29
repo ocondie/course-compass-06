@@ -1127,7 +1127,7 @@ function EligibilityPanel({
   const blockerIntro =
     ending.cta === "provisional"
       ? "We can't book you onto any motorcycle training until you hold a UK provisional driving licence."
-      : "A non-UK licence doesn't give you motorcycle entitlement in the UK, so you can't book training yet.";
+      : "A non-UK licence doesn't give you motorcycle entitlement in the UK, so you can't book any training yet. You can easily convert your licence using the gov.uk tool.";
   const blockerSteps =
     ending.cta === "provisional"
       ? [
@@ -1135,10 +1135,7 @@ function EligibilityPanel({
           "It usually arrives within 1–3 weeks",
           "Once it's in your hand, come back and book your CBT",
         ]
-      : [
-          "EU/EEA licence: you can usually exchange it for a UK licence on GOV.UK, or apply for a UK provisional alongside it",
-          "Non-EU licence: if you've recently become a UK resident, you have 12 months to exchange it — otherwise you'll need a UK provisional",
-        ];
+      : [];
 
   return (
     <div className="space-y-5 py-2">
@@ -1155,16 +1152,56 @@ function EligibilityPanel({
             <p className="mt-1 text-sm leading-relaxed text-foreground/80">
               {blockerIntro}
             </p>
-            <ul className="mt-2 space-y-1 text-sm leading-relaxed text-foreground/80">
-              {blockerSteps.map((step) => (
-                <li key={step} className="flex gap-2">
-                  <span className="mt-2 size-1 shrink-0 rounded-full bg-destructive/60" />
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ul>
+            {blockerSteps.length > 0 && (
+              <ul className="mt-2 space-y-1 text-sm leading-relaxed text-foreground/80">
+                {blockerSteps.map((step) => (
+                  <li key={step} className="flex gap-2">
+                    <span className="mt-2 size-1 shrink-0 rounded-full bg-destructive/60" />
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {ending.cta === "convert" && (
+              <div className="mt-4">
+                <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
+                  Convert licence
+                </Button>
+              </div>
+            )}
           </div>
         </div>
+      )}
+
+      {ending.cta !== "convert" && (
+      <div className="flex items-start gap-4 rounded-lg border border-primary/20 bg-primary/5 p-5">
+        <ShieldCheck className="mt-0.5 size-6 shrink-0 text-primary" />
+        <div className="flex-1">
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+            {isBlocked ? "Here's what you could book" : "Here's what you can do"}
+          </p>
+          <p className="mt-2 text-base leading-relaxed">
+            {ending.cta === "cbt" ? (
+              <>
+                You're in the right place — you're ready to book your <strong>CBT</strong>, and ride up to a 125cc.
+              </>
+            ) : (
+              eligibility.summary
+            )}
+          </p>
+          <div className="mt-4">
+            {ending.cta === "cbt" ? (
+              <Button onClick={onCtaClick} className="w-full sm:w-auto">
+                Book CBT now
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
+                Apply for provisional
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
       )}
 
       <div className="flex items-start gap-4 rounded-lg border border-primary/20 bg-primary/5 p-5">
