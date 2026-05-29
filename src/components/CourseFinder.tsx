@@ -1290,9 +1290,6 @@ function ResultPanel({
               Your journey, step by step
             </p>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
-            Each step unlocks the next. You can't skip ahead — for example, you need a CBT before any full A1, A2 or A licence.
-          </p>
           <JourneyStages stages={journey} />
         </div>
       )}
