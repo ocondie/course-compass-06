@@ -1169,7 +1169,7 @@ function EligibilityPanel({
 
       <div className="flex items-start gap-4 rounded-lg border border-primary/20 bg-primary/5 p-5">
         <ShieldCheck className="mt-0.5 size-6 shrink-0 text-primary" />
-        <div>
+        <div className="flex-1">
           <p className="text-sm font-semibold uppercase tracking-wide text-primary">
             {isBlocked ? "Here's what you could book" : "Here's what you can do"}
           </p>
@@ -1186,6 +1186,17 @@ function EligibilityPanel({
               eligibility.summary
             )}
           </p>
+          <div className="mt-4">
+            {ending.cta === "cbt" ? (
+              <Button onClick={onCtaClick} className="w-full sm:w-auto">
+                Book CBT now
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
+                {ending.cta === "provisional" ? "Apply for provisional" : "Convert licence"}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
       <div className="rounded-lg border border-border bg-card p-4">
@@ -1195,30 +1206,18 @@ function EligibilityPanel({
         <p className="mt-1 text-sm text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
           Three more questions about the bike you actually want to ride and we'll match you to the right course — and show you the roadmap if you're aiming higher than your age allows today.
         </p>
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-          {ending.cta === "cbt" ? (
-            <>
-              <Button onClick={onCtaClick} className="gap-2 sm:flex-1">
-                <Compass className="size-4" />
-                Book CBT now
-              </Button>
-              <Button variant="outline" onClick={onContinue} className="sm:flex-1">
-                Yes, refine for me
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button onClick={onContinue} className="sm:flex-1">
-                Yes, refine for me
-              </Button>
-              <Button variant="outline" onClick={onCtaClick} className="gap-2 sm:flex-1">
-                <Compass className="size-4" />
-                {ending.cta === "provisional" ? "Apply for provisional" : "Convert licence"}
-              </Button>
-            </>
-          )}
+        <div className="mt-3">
+          <Button
+            onClick={onContinue}
+            variant={ending.cta === "cbt" ? "outline" : "default"}
+            className="w-full gap-2 sm:w-auto"
+          >
+            <Compass className="size-4" />
+            Yes, refine for me
+          </Button>
         </div>
       </div>
+
 
 
       <div className="flex items-center justify-between pt-2">
