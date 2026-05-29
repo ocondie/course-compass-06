@@ -1185,8 +1185,9 @@ function EligibilityPanel({
             ) : (
               eligibility.summary
             )}
+          </p>
+        </div>
       </div>
-
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
           Want a fully refined plan?
