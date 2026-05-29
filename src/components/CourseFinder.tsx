@@ -849,6 +849,9 @@ export function CourseFinder({
             }))}
             onBack={back}
             onReset={reset}
+          />
+        )}
+
         {stage === "passenger" && (
           <QuestionPanel
             question="Will you ever need to carry a passenger on your bike?"
@@ -877,9 +880,6 @@ export function CourseFinder({
           />
         )}
 
-            onReset={reset}
-          />
-        )}
 
         {stage === "result" && ending && eligibility && (
           <ResultPanel
