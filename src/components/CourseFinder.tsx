@@ -189,7 +189,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
       };
     case "19-23":
       return {
-        maxBikeNow: "midweight",
+        maxBikeNow: "125",
         passengerNow: false,
         motorwaysNow: false,
         summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
@@ -197,7 +197,7 @@ function eligibilityFor(age: AgeBand): EligibilityCap {
       };
     case "24+":
       return {
-        maxBikeNow: "unrestricted",
+        maxBikeNow: "125",
         passengerNow: false,
         motorwaysNow: false,
         summary: "Today, a CBT lets you ride a 125cc (up to 11kW) on the road with L-plates.",
