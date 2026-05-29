@@ -1204,38 +1204,6 @@ function EligibilityPanel({
       </div>
       )}
 
-      <div className="flex items-start gap-4 rounded-lg border border-primary/20 bg-primary/5 p-5">
-        <ShieldCheck className="mt-0.5 size-6 shrink-0 text-primary" />
-        <div className="flex-1">
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            {isBlocked ? "Here's what you could book" : "Here's what you can do"}
-          </p>
-          <p className="mt-2 text-base leading-relaxed">
-            {ending.cta === "cbt" ? (
-              <>
-                You're in the right place — you're ready to book your <strong>CBT</strong>, and ride up to a 125cc.
-              </>
-            ) : ending.cta === "convert" ? (
-              <>
-                Once you have exchanged your licence, you're cleared to book your <strong>CBT</strong>, which {eligibility.summary.replace("Today, a CBT ", "")}
-              </>
-            ) : (
-              eligibility.summary
-            )}
-          </p>
-          <div className="mt-4">
-            {ending.cta === "cbt" ? (
-              <Button onClick={onCtaClick} className="w-full sm:w-auto">
-                Book CBT now
-              </Button>
-            ) : (
-              <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
-                {ending.cta === "provisional" ? "Apply for provisional" : "Convert licence"}
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
           Want a fully refined plan?
