@@ -652,7 +652,7 @@ export function CourseFinder({
     if (!isControlled) setInternalOpen(next);
     onOpenChange?.(next);
   };
-  const [stage, setStage] = useState<Stage>("age");
+  const [stage, setStage] = useState<Stage>("intro");
   const [age, setAge] = useState<AgeBand | null>(null);
   const [licence, setLicence] = useState<Licence | null>(null);
   const [bikeSize, setBikeSize] = useState<BikeSize | null>(null);
@@ -663,7 +663,7 @@ export function CourseFinder({
   } | null>(null);
 
   const reset = () => {
-    setStage("age");
+    setStage("intro");
     setAge(null);
     setLicence(null);
     setBikeSize(null);
