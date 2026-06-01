@@ -1124,37 +1124,35 @@ function EligibilityPanel({
   return (
     <div className="space-y-5 py-2">
       {isBlocked && (
-        <div className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-destructive" />
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-destructive">
-              Before you can book
-            </p>
-            <p className="mt-1 text-sm font-semibold leading-snug text-destructive">
-              {blockerHeading}
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-foreground/80">
-              {blockerIntro}
-            </p>
-            {blockerSteps.length > 0 && (
-              <ul className="mt-2 space-y-1 text-sm leading-relaxed text-foreground/80">
-                {blockerSteps.map((step) => (
-                  <li key={step} className="flex gap-2">
-                    <span className="mt-2 size-1 shrink-0 rounded-full bg-destructive/60" />
-                    <span>{step}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {ending.cta === "convert" && (
-              <div className="mt-4">
-                <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
-                  Convert licence
-                  <ArrowUpRight className="size-4" />
-                </Button>
-              </div>
-            )}
-          </div>
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-destructive">
+            <AlertTriangle className="size-4 shrink-0" />
+            Before you can book
+          </p>
+          <p className="mt-1 text-sm font-semibold leading-snug text-destructive">
+            {blockerHeading}
+          </p>
+          <p className="mt-1 text-sm leading-relaxed text-foreground/80">
+            {blockerIntro}
+          </p>
+          {blockerSteps.length > 0 && (
+            <ul className="mt-2 space-y-1 text-sm leading-relaxed text-foreground/80">
+              {blockerSteps.map((step) => (
+                <li key={step} className="flex gap-2">
+                  <span className="mt-2 size-1 shrink-0 rounded-full bg-destructive/60" />
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {ending.cta === "convert" && (
+            <div className="mt-4">
+              <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
+                Convert licence
+                <ArrowUpRight className="size-4" />
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
