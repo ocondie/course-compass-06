@@ -971,8 +971,6 @@ function QuestionPanel({
 // --- Lead-capture panel (first HubSpot submission) --------------------------
 
 const captureSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required"),
-  lastName: z.string().trim().min(1, "Last name is required"),
   email: z.string().trim().email("Enter a valid email"),
 });
 
