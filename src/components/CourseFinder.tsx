@@ -903,6 +903,7 @@ export function CourseFinder({
             onReset={reset}
           />
         )}
+        </div>
       </DialogContent>
     </Dialog>
   );
