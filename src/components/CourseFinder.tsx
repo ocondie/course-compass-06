@@ -647,8 +647,6 @@ export function CourseFinder({
   const [passenger, setPassenger] = useState<YesNoUnsure | null>(null);
   const [motorways, setMotorways] = useState<YesNoUnsure | null>(null);
   const [contact, setContact] = useState<{
-    firstName: string;
-    lastName: string;
     email: string;
   } | null>(null);
 
