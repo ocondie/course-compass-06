@@ -568,9 +568,9 @@ function journeyFor(
 }
 
 // Capture form sits between the licence question and the eligibility summary.
-type Stage = "age" | "licence" | "capture" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
+type Stage = "intro" | "age" | "licence" | "capture" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
 
-const STAGE_ORDER: Stage[] = ["age", "licence", "capture", "eligibility", "bikeSize", "passenger", "motorways", "result"];
+const STAGE_ORDER: Stage[] = ["intro", "age", "licence", "capture", "eligibility", "bikeSize", "passenger", "motorways", "result"];
 
 // --- HubSpot Forms API plumbing ---------------------------------------------
 
