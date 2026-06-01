@@ -72,9 +72,9 @@ type EligibilityCap = {
 };
 
 const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
-  { value: "16", label: "16" },
-  { value: "17-18", label: "17–18" },
-  { value: "19-23", label: "19–23" },
+  { value: "16", label: "16 years old" },
+  { value: "17-18", label: "17–18 years old" },
+  { value: "19-23", label: "19–23 years old" },
   { value: "24+", label: "24 or older" },
 ];
 
