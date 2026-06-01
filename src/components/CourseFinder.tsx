@@ -606,6 +606,7 @@ async function submitCaptureToHubspot(
     { name: "email", value: values.email },
     { name: "getting_started_age_bracket", value: age },
     { name: "current_licence", value: licence },
+    { name: "getting_started_new_pop_up_filler", value: "true" },
   ]);
 }
 
