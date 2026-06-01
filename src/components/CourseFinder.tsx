@@ -493,6 +493,18 @@ function journeyFor(
   if (wantsFullLicence) {
     const target = aspirations?.bikeSize ?? "midweight";
 
+    // Motorcycle theory test — required before any A1/A2/A licence
+    stages.push({
+      key: "theory",
+      title: "Motorcycle theory test",
+      description:
+        "A separate motorcycle theory test (multiple choice + hazard perception). You must pass this before booking Mod 1 / Mod 2 for any A1, A2 or full A licence.",
+      status: "locked",
+      icon: "fullLicence",
+      blockedBy: hasUkEntitlement ? "Pass your CBT first" : "Get your UK provisional first",
+    });
+
+
     if (age === "16") {
       stages.push({
         key: "a1",
@@ -586,13 +598,11 @@ async function submitToHubspot(fields: HsField[]): Promise<void> {
 }
 
 async function submitCaptureToHubspot(
-  values: { firstName: string; lastName: string; email: string },
+  values: { email: string },
   age: AgeBand,
   licence: Licence,
 ): Promise<void> {
   await submitToHubspot([
-    { name: "firstname", value: values.firstName },
-    { name: "lastname", value: values.lastName },
     { name: "email", value: values.email },
     { name: "getting_started_age_bracket", value: age },
     { name: "current_licence", value: licence },
@@ -649,8 +659,6 @@ export function CourseFinder({
   const [passenger, setPassenger] = useState<YesNoUnsure | null>(null);
   const [motorways, setMotorways] = useState<YesNoUnsure | null>(null);
   const [contact, setContact] = useState<{
-    firstName: string;
-    lastName: string;
     email: string;
   } | null>(null);
 
@@ -975,8 +983,6 @@ function QuestionPanel({
 // --- Lead-capture panel (first HubSpot submission) --------------------------
 
 const captureSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required"),
-  lastName: z.string().trim().min(1, "Last name is required"),
   email: z.string().trim().email("Enter a valid email"),
 });
 
@@ -1001,7 +1007,7 @@ function LeadCapturePanel({
     formState: { errors, isSubmitting },
   } = useForm<CaptureValues>({
     resolver: zodResolver(captureSchema),
-    defaultValues: { firstName: "", lastName: "", email: "" },
+    defaultValues: { email: "" },
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -1026,31 +1032,6 @@ function LeadCapturePanel({
       </div>
 
       <div className="space-y-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="firstName">First name</Label>
-          <Input
-            id="firstName"
-            autoComplete="given-name"
-            disabled={isSubmitting}
-            {...register("firstName")}
-          />
-          {errors.firstName && (
-            <p className="text-xs text-destructive">{errors.firstName.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="lastName">Last name</Label>
-          <Input
-            id="lastName"
-            autoComplete="family-name"
-            disabled={isSubmitting}
-            {...register("lastName")}
-          />
-          {errors.lastName && (
-            <p className="text-xs text-destructive">{errors.lastName.message}</p>
-          )}
-        </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
