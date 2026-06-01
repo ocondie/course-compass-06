@@ -778,7 +778,8 @@ export function CourseFinder({
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+        <div className="overflow-y-auto px-6 py-6">
         <DialogHeader className="sr-only">
           <DialogTitle>Course Finder</DialogTitle>
           <DialogDescription>
@@ -902,6 +903,7 @@ export function CourseFinder({
             onReset={reset}
           />
         )}
+        </div>
       </DialogContent>
     </Dialog>
   );
