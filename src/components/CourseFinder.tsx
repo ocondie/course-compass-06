@@ -588,7 +588,7 @@ async function submitToHubspot(fields: HsField[]): Promise<void> {
       fields,
       context: {
         pageUri: typeof window !== "undefined" ? window.location.href : "",
-        pageName: "RideTo Course Finder",
+        pageName: "RideTo Licence Finder",
       },
     }),
   });
@@ -781,7 +781,7 @@ export function CourseFinder({
       <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0">
         <div className="overflow-y-auto px-6 py-6">
         <DialogHeader className="sr-only">
-          <DialogTitle>Course Finder</DialogTitle>
+          <DialogTitle>Licence Finder</DialogTitle>
           <DialogDescription>
             A few quick questions and we'll point you to the right training.
           </DialogDescription>
