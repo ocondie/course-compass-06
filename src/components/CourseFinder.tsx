@@ -1166,7 +1166,7 @@ function EligibilityPanel({
           <p className="mt-2 text-base leading-relaxed">
             {ending.cta === "cbt" ? (
               <>
-                You're in the right place — you're ready to book your <strong>CBT</strong>, and ride up to a 125cc.
+                You're in the right place — <strong>you're ready to book your CBT</strong>. Finish your booking to ride up to a 125cc.
               </>
             ) : (
               eligibility.summary
@@ -1175,7 +1175,7 @@ function EligibilityPanel({
           <div className="mt-4">
             {ending.cta === "cbt" ? (
               <Button onClick={onCtaClick} className="w-full sm:w-auto">
-                Book CBT now
+                Continue with booking
               </Button>
             ) : (
               <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
