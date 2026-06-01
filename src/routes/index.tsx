@@ -1,38 +1,42 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { CourseFinder } from "@/components/CourseFinder";
 
 export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Find Your Motorcycle Course | RideTo" },
-      {
-        name: "description",
-        content:
-          "Not sure which motorcycle course you need? Answer a few quick questions and we'll recommend the right course — CBT, Renewal, Full Licence, ITM or Gear Conversion.",
-      },
+      { title: "Licence Finder" },
+      { name: "robots", content: "noindex" },
     ],
   }),
 });
 
 function Index() {
-  return (
-    <main className="min-h-screen bg-background">
-      <section className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
-        <p className="mb-3 inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-          Licence Finder
-        </p>
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          What training do I need?
-        </h1>
-        <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-          A few quick questions and we'll match you to the right training.
-        </p>
-        <div className="mt-8">
-          <CourseFinder />
-        </div>
+  // Popup-only embed: dialog opens immediately when the iframe loads.
+  const [open, setOpen] = useState(true);
 
-      </section>
+  // Tell the parent window to hide the iframe overlay when the user closes the popup.
+  useEffect(() => {
+    if (!open && typeof window !== "undefined" && window.parent !== window) {
+      window.parent.postMessage({ type: "rideto:close" }, "*");
+    }
+  }, [open]);
+
+  // Signal readiness to the parent and keep the iframe transparent so the host page shows through.
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.parent !== window) {
+      window.parent.postMessage({ type: "rideto:ready" }, "*");
+    }
+    if (typeof document !== "undefined") {
+      document.documentElement.style.background = "transparent";
+      document.body.style.background = "transparent";
+    }
+  }, []);
+
+  return (
+    <main className="min-h-screen bg-transparent">
+      <CourseFinder open={open} onOpenChange={setOpen} hideTrigger />
     </main>
   );
 }
