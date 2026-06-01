@@ -1157,36 +1157,37 @@ function EligibilityPanel({
       )}
 
       {ending.cta !== "convert" && (
-      <div className="flex items-start gap-4 rounded-lg border border-primary/20 bg-primary/5 p-5">
-        <ShieldCheck className="mt-0.5 size-6 shrink-0 text-primary" />
-        <div className="flex-1">
+      <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-5 shadow-sm">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="size-5 shrink-0 text-primary" />
           <p className="text-sm font-semibold uppercase tracking-wide text-primary">
             {isBlocked ? "Here's what you could book" : "Here's what you can do"}
           </p>
-          <p className="mt-2 text-base leading-relaxed">
-            {ending.cta === "cbt" ? (
-              <>
-                You're in the right place — <strong>you're ready to book your CBT</strong>. Finish your booking to ride up to a 125cc.
-              </>
-            ) : (
-              eligibility.summary
-            )}
-          </p>
-          <div className="mt-4">
-            {ending.cta === "cbt" ? (
-              <Button onClick={onCtaClick} className="w-full sm:w-auto">
-                Continue with booking
-              </Button>
-            ) : (
-              <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
-                Apply for provisional
-                <ArrowUpRight className="size-4" />
-              </Button>
-            )}
-          </div>
+        </div>
+        <p className="mt-2 text-base leading-relaxed">
+          {ending.cta === "cbt" ? (
+            <>
+              You're in the right place — <strong>you're ready to book your CBT</strong>. Finish your booking to ride up to a 125cc.
+            </>
+          ) : (
+            eligibility.summary
+          )}
+        </p>
+        <div className="mt-4">
+          {ending.cta === "cbt" ? (
+            <Button onClick={onCtaClick} className="w-full sm:w-auto">
+              Continue with booking
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
+              Apply for provisional
+              <ArrowUpRight className="size-4" />
+            </Button>
+          )}
         </div>
       </div>
       )}
+
 
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
