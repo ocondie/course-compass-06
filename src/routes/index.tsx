@@ -20,7 +20,7 @@ function Index() {
     <main className="min-h-screen bg-background">
       <section className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
         <p className="mb-3 inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-          Course Finder
+          Licence Finder
         </p>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
           What training do I need?

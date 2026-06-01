@@ -6,7 +6,7 @@ export const Route = createFileRoute("/embed")({
   component: EmbedPage,
   head: () => ({
     meta: [
-      { title: "Course Finder" },
+      { title: "Licence Finder" },
       { name: "robots", content: "noindex" },
     ],
   }),
