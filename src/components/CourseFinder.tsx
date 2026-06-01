@@ -752,7 +752,9 @@ export function CourseFinder({
 
   // Module labels shown above the question
   const moduleLabel =
-    stage === "age" || stage === "licence"
+    stage === "intro"
+      ? "Licence Finder"
+      : stage === "age" || stage === "licence"
       ? "Step 1 of 2 · Eligibility"
       : stage === "capture"
       ? "Almost there"
