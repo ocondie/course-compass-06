@@ -586,13 +586,11 @@ async function submitToHubspot(fields: HsField[]): Promise<void> {
 }
 
 async function submitCaptureToHubspot(
-  values: { firstName: string; lastName: string; email: string },
+  values: { email: string },
   age: AgeBand,
   licence: Licence,
 ): Promise<void> {
   await submitToHubspot([
-    { name: "firstname", value: values.firstName },
-    { name: "lastname", value: values.lastName },
     { name: "email", value: values.email },
     { name: "getting_started_age_bracket", value: age },
     { name: "current_licence", value: licence },
