@@ -493,6 +493,18 @@ function journeyFor(
   if (wantsFullLicence) {
     const target = aspirations?.bikeSize ?? "midweight";
 
+    // Motorcycle theory test — required before any A1/A2/A licence
+    stages.push({
+      key: "theory",
+      title: "Motorcycle theory test",
+      description:
+        "A separate motorcycle theory test (multiple choice + hazard perception). You must pass this before booking Mod 1 / Mod 2 for any A1, A2 or full A licence.",
+      status: "locked",
+      icon: "fullLicence",
+      blockedBy: hasUkEntitlement ? "Pass your CBT first" : "Get your UK provisional first",
+    });
+
+
     if (age === "16") {
       stages.push({
         key: "a1",
