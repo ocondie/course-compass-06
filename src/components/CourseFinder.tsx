@@ -793,8 +793,27 @@ export function CourseFinder({
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
             {moduleLabel}
           </p>
-          <Progress value={progress} className="h-1.5" />
+          {stage !== "intro" && <Progress value={progress} className="h-1.5" />}
         </div>
+
+        {stage === "intro" && (
+          <div className="mt-6 flex flex-col items-start text-left">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              What training do I need?
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              A few quick questions and we'll match you to the right training.
+            </p>
+            <Button
+              size="lg"
+              className="mt-6 gap-2"
+              onClick={() => setStage("age")}
+            >
+              <Sparkles className="size-4" />
+              Get started
+            </Button>
+          </div>
+        )}
 
         {stage === "age" && (
           <QuestionPanel
