@@ -995,7 +995,7 @@ function LeadCapturePanel({
     formState: { errors, isSubmitting },
   } = useForm<CaptureValues>({
     resolver: zodResolver(captureSchema),
-    defaultValues: { firstName: "", lastName: "", email: "" },
+    defaultValues: { email: "" },
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -1020,31 +1020,6 @@ function LeadCapturePanel({
       </div>
 
       <div className="space-y-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="firstName">First name</Label>
-          <Input
-            id="firstName"
-            autoComplete="given-name"
-            disabled={isSubmitting}
-            {...register("firstName")}
-          />
-          {errors.firstName && (
-            <p className="text-xs text-destructive">{errors.firstName.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="lastName">Last name</Label>
-          <Input
-            id="lastName"
-            autoComplete="family-name"
-            disabled={isSubmitting}
-            {...register("lastName")}
-          />
-          {errors.lastName && (
-            <p className="text-xs text-destructive">{errors.lastName.message}</p>
-          )}
-        </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
