@@ -568,9 +568,9 @@ function journeyFor(
 }
 
 // Capture form sits between the licence question and the eligibility summary.
-type Stage = "age" | "licence" | "capture" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
+type Stage = "intro" | "age" | "licence" | "capture" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
 
-const STAGE_ORDER: Stage[] = ["age", "licence", "capture", "eligibility", "bikeSize", "passenger", "motorways", "result"];
+const STAGE_ORDER: Stage[] = ["intro", "age", "licence", "capture", "eligibility", "bikeSize", "passenger", "motorways", "result"];
 
 // --- HubSpot Forms API plumbing ---------------------------------------------
 
@@ -652,7 +652,7 @@ export function CourseFinder({
     if (!isControlled) setInternalOpen(next);
     onOpenChange?.(next);
   };
-  const [stage, setStage] = useState<Stage>("age");
+  const [stage, setStage] = useState<Stage>("intro");
   const [age, setAge] = useState<AgeBand | null>(null);
   const [licence, setLicence] = useState<Licence | null>(null);
   const [bikeSize, setBikeSize] = useState<BikeSize | null>(null);
@@ -663,7 +663,7 @@ export function CourseFinder({
   } | null>(null);
 
   const reset = () => {
-    setStage("age");
+    setStage("intro");
     setAge(null);
     setLicence(null);
     setBikeSize(null);
@@ -752,7 +752,9 @@ export function CourseFinder({
 
   // Module labels shown above the question
   const moduleLabel =
-    stage === "age" || stage === "licence"
+    stage === "intro"
+      ? "Licence Finder"
+      : stage === "age" || stage === "licence"
       ? "Step 1 of 2 · Eligibility"
       : stage === "capture"
       ? "Almost there"
@@ -791,8 +793,27 @@ export function CourseFinder({
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
             {moduleLabel}
           </p>
-          <Progress value={progress} className="h-1.5" />
+          {stage !== "intro" && <Progress value={progress} className="h-1.5" />}
         </div>
+
+        {stage === "intro" && (
+          <div className="mt-6 flex flex-col items-start text-left">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              What training do I need?
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              A few quick questions and we'll match you to the right training.
+            </p>
+            <Button
+              size="lg"
+              className="mt-6 gap-2"
+              onClick={() => setStage("age")}
+            >
+              <Sparkles className="size-4" />
+              Get started
+            </Button>
+          </div>
+        )}
 
         {stage === "age" && (
           <QuestionPanel
