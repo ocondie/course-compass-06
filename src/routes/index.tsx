@@ -50,6 +50,8 @@ function Index() {
           max-height: 100vh !important;
           margin: 0 !important;
           transform: none !important;
+          translate: none !important;
+          scale: none !important;
           animation: none !important;
           transition: none !important;
           border-radius: 0 !important;

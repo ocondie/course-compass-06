@@ -815,6 +815,8 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
           maxHeight: "100vh",
           margin: 0,
           transform: "none",
+          translate: "none",
+          scale: "none",
           animation: "none",
           transition: "none",
           borderRadius: 0,
