@@ -35,23 +35,12 @@ function Index() {
   return (
     <main className="min-h-screen bg-transparent">
       <style>{`
-        [data-rideto-embed] [data-radix-dialog-overlay] { display: none !important; }
-        [data-rideto-embed] [role="dialog"][data-state] {
-          position: fixed !important;
-          inset: 0 !important;
-          left: 0 !important;
-          top: 0 !important;
-          transform: none !important;
-          width: 100% !important;
-          height: 100% !important;
-          max-width: 100% !important;
-          max-height: 100% !important;
-          border: 0 !important;
-          border-radius: 0 !important;
-          box-shadow: none !important;
+        [data-rideto-embed] [data-radix-dialog-overlay] {
+          display: none !important;
+          background: transparent !important;
         }
       `}</style>
-      <CourseFinder open={open} onOpenChange={setOpen} hideTrigger />
+      <CourseFinder open={open} onOpenChange={setOpen} hideTrigger embed />
     </main>
   );
 }
