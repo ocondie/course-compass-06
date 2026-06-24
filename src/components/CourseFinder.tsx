@@ -593,11 +593,47 @@ async function submitToHubspot(fields: HsField[]): Promise<void> {
   }
 }
 
+// --- Value mappings: Lovable answer -> HubSpot internal value ---
+// Source: "Getting Started: Lovable Pop Up Answer / HubSpot Property Matching" (June 2026)
+
+// getting_started_age_bracket (Dropdown). Note HubSpot uses the numeric 16, not "16".
+const AGE_TO_HS: Record<AgeBand, string> = {
+  "16": "16",
+  "17-18": "17-18",
+  "19-23": "19-23",
+  "24+": "24+",
+};
+
+// getting_started_bike_size_want (Dropdown)
+const BIKE_SIZE_TO_HS: Record<BikeSize, string> = {
+  moped: "Up to 125",
+  "125": "Up to 500",
+  midweight: "Over 500cc",
+  unrestricted: "Anything I like",
+};
+
+// getting_started_passengers_need + getting_started_motorways (Dropdown)
+const YES_NO_UNSURE_TO_HS: Record<YesNoUnsure, string> = {
+  yes: "Yes",
+  no: "No",
+  unsure: "Not Sure",
+};
+
+// current_licences (Multiple checkboxes). HubSpot multi-checkbox accepts a
+// semicolon-separated list of internal values. CBT and EU options are not
+// asked in this flow, so they are never set.
+const LICENCE_TO_HS: Record<Licence, string> = {
+  none: "CURRENT_LICENCES_NONE",
+  "uk-provisional": "CURRENT_LICENCES_PROVISIONAL_LICENCE",
+  "non-uk": "CURRENT_LICENCES_FOREIGN",
+  "uk-driving": "CURRENT_LICENCES_DRIVING_LICENCE",
+};
+
 async function submitCaptureToHubspot(values: { email: string }, age: AgeBand, licence: Licence): Promise<void> {
   await submitToHubspot([
     { name: "email", value: values.email },
-    { name: "getting_started_age_bracket", value: age },
-    { name: "current_licence", value: licence },
+    { name: "getting_started_age_bracket", value: AGE_TO_HS[age] },
+    { name: "current_licences", value: LICENCE_TO_HS[licence] },
     { name: "getting_started_new_pop_up_filler", value: "true" },
   ]);
 }
@@ -611,9 +647,12 @@ async function submitPersonalisationToHubspot(
   },
 ): Promise<void> {
   const fields: HsField[] = [{ name: "email", value: email }];
-  if (answers.bikeSize) fields.push({ name: "getting_started_bike_size_want", value: answers.bikeSize });
-  if (answers.passenger) fields.push({ name: "getting_started_passengers_need", value: answers.passenger });
-  if (answers.motorways) fields.push({ name: "getting_started_motorways", value: answers.motorways });
+  if (answers.bikeSize)
+    fields.push({ name: "getting_started_bike_size_want", value: BIKE_SIZE_TO_HS[answers.bikeSize] });
+  if (answers.passenger)
+    fields.push({ name: "getting_started_passengers_need", value: YES_NO_UNSURE_TO_HS[answers.passenger] });
+  if (answers.motorways)
+    fields.push({ name: "getting_started_motorways", value: YES_NO_UNSURE_TO_HS[answers.motorways] });
   // Only fire if we have something to update beyond the email.
   if (fields.length > 1) {
     await submitToHubspot(fields);
