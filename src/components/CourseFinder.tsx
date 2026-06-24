@@ -771,6 +771,14 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
 
   const journey = age && licence ? journeyFor(age, licence, aspirations) : [];
 
+  const contentShellClass = embed
+    ? "flex min-h-full w-full items-center justify-center overflow-y-auto px-5 py-10 sm:px-8"
+    : "overflow-y-auto px-6 py-6";
+
+  const contentFrameClass = embed
+    ? "m-auto w-full max-w-[560px] py-6 sm:py-8"
+    : "w-full";
+
   // Module labels shown above the question
   const moduleLabel =
     stage === "intro"
@@ -805,6 +813,7 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
         className={embed ? "overflow-hidden flex flex-col p-0 border-0 rounded-none shadow-none max-w-none" : "sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0"}
         style={embed ? {
           position: "fixed",
+          display: "flex",
           inset: 0,
           left: 0,
           top: 0,
@@ -823,7 +832,8 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
         } : undefined}
       >
 
-        <div className="overflow-y-auto px-6 py-6">
+        <div className={contentShellClass}>
+          <div className={contentFrameClass}>
           <DialogHeader className="sr-only">
             <DialogTitle>Licence Finder</DialogTitle>
             <DialogDescription>A few quick questions and we'll point you to the right training.</DialogDescription>
@@ -960,6 +970,7 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
               onReset={reset}
             />
           )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
