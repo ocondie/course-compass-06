@@ -776,7 +776,7 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
     : "overflow-y-auto px-6 py-6";
 
   const contentFrameClass = embed
-    ? "m-auto w-full max-w-[560px] py-6 pr-10 sm:py-8 sm:pr-0"
+    ? "m-auto w-full max-w-[560px] py-6 sm:py-8"
     : "w-full";
 
   // Module labels shown above the question
@@ -813,6 +813,7 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
         className={embed ? "overflow-hidden flex flex-col p-0 border-0 rounded-none shadow-none max-w-none" : "sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0"}
         style={embed ? {
           position: "fixed",
+          display: "flex",
           inset: 0,
           left: 0,
           top: 0,
