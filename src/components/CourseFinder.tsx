@@ -619,21 +619,22 @@ const YES_NO_UNSURE_TO_HS: Record<YesNoUnsure, string> = {
   unsure: "Not Sure",
 };
 
-// current_licences (Multiple checkboxes). HubSpot multi-checkbox accepts a
-// semicolon-separated list of internal values. CBT and EU options are not
-// asked in this flow, so they are never set.
+// getting_started_current_licence (Dropdown select). Single value per submission.
 const LICENCE_TO_HS: Record<Licence, string> = {
-  none: "CURRENT_LICENCES_NONE",
-  "uk-provisional": "CURRENT_LICENCES_PROVISIONAL_LICENCE",
-  "non-uk": "CURRENT_LICENCES_FOREIGN",
-  "uk-driving": "CURRENT_LICENCES_DRIVING_LICENCE",
+  none: "No Driving Licence",
+  "uk-provisional": "UK Provisional Licence",
+  "non-uk": "Foreign Driving Licence",
+  "uk-driving": "UK Full Driving Licence",
 };
 
 async function submitCaptureToHubspot(values: { email: string }, age: AgeBand, licence: Licence): Promise<void> {
   await submitToHubspot([
     { name: "email", value: values.email },
     { name: "getting_started_age_bracket", value: AGE_TO_HS[age] },
-    { name: "current_licence", value: LICENCE_TO_HS[licence] },
+    { name: "getting_started_current_licence", value: LICENCE_TO_HS[licence] },
+    { name: "getting_started_new_pop_up_filler", value: "true" },
+  ]);
+}
     { name: "getting_started_new_pop_up_filler", value: "true" },
   ]);
 }
