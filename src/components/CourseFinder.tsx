@@ -635,9 +635,6 @@ async function submitCaptureToHubspot(values: { email: string }, age: AgeBand, l
     { name: "getting_started_new_pop_up_filler", value: "true" },
   ]);
 }
-    { name: "getting_started_new_pop_up_filler", value: "true" },
-  ]);
-}
 
 async function submitPersonalisationToHubspot(
   email: string,
