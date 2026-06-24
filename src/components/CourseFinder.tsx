@@ -83,20 +83,20 @@ const LICENCE_OPTIONS: Record<AgeBand, { value: Licence; label: string; help?: s
   "17-18": [
     { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
-    { value: "non-uk", label: "Non-UK driving licence" },
     { value: "uk-driving", label: "UK full car driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
   ],
   "19-23": [
     { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
-    { value: "non-uk", label: "Non-UK driving licence" },
     { value: "uk-driving", label: "UK full car driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
   ],
   "24+": [
     { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
-    { value: "non-uk", label: "Non-UK driving licence" },
     { value: "uk-driving", label: "UK full car driving licence" },
+    { value: "non-uk", label: "Non-UK driving licence" },
   ],
 };
 
