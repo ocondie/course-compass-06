@@ -665,9 +665,12 @@ type CourseFinderProps = {
   onOpenChange?: (open: boolean) => void;
   /** Hide the built-in "Find my course" trigger button (for embed/external trigger). */
   hideTrigger?: boolean;
+  /** Render dialog full-viewport (for iframe embed). */
+  embed?: boolean;
 };
 
-export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger = false }: CourseFinderProps = {}) {
+export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger = false, embed = false }: CourseFinderProps = {}) {
+
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
