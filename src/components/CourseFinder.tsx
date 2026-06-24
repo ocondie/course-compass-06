@@ -801,7 +801,7 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+      <DialogContent className={embed ? "max-w-none w-screen h-screen rounded-none border-0 overflow-hidden flex flex-col p-0 left-0 top-0 translate-x-0 translate-y-0" : "sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0"}>
         <div className="overflow-y-auto px-6 py-6">
           <DialogHeader className="sr-only">
             <DialogTitle>Licence Finder</DialogTitle>
