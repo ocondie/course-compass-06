@@ -32,15 +32,10 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 
-
 type AgeBand = "16" | "17-18" | "19-23" | "24+";
 type Licence = "none" | "uk-provisional" | "non-uk" | "uk-driving";
 
-type EndingId =
-  | "A" | "B" | "C"
-  | "D" | "E" | "F" | "G"
-  | "H" | "I" | "J" | "K"
-  | "L" | "M" | "N" | "O";
+type EndingId = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O";
 
 type CtaKind = "provisional" | "cbt" | "convert";
 
@@ -79,10 +74,7 @@ const AGE_OPTIONS: { value: AgeBand; label: string; help?: string }[] = [
 ];
 
 // Per-age licence options (16-year-olds can't yet hold a UK driving licence)
-const LICENCE_OPTIONS: Record<
-  AgeBand,
-  { value: Licence; label: string; help?: string }[]
-> = {
+const LICENCE_OPTIONS: Record<AgeBand, { value: Licence; label: string; help?: string }[]> = {
   "16": [
     { value: "none", label: "I don't have any kind of driving licence" },
     { value: "uk-provisional", label: "UK provisional driving licence" },
@@ -114,7 +106,6 @@ const BIKE_SIZE_OPTIONS: { value: BikeSize; label: string; help: string }[] = [
   { value: "midweight", label: "A midweight bike (up to 35kW)", help: "A2 friendly bikes" },
   { value: "unrestricted", label: "Anything I like — no restrictions", help: "Any bike, no power cap" },
 ];
-
 
 const YES_NO_UNSURE: { value: YesNoUnsure; label: string }[] = [
   { value: "yes", label: "Yes" },
@@ -225,33 +216,21 @@ const ENDINGS: Record<EndingId, Ending> = {
     cta: "provisional",
     title: "Apply for your UK provisional licence",
     body: "You'll need a UK provisional before you can book a CBT. Once it arrives, a CBT lets you ride a 125cc on the road.",
-    bullets: [
-      "Apply via GOV.UK",
-      "Then book a CBT to ride a 125cc (up to 11kW)",
-      "A1 licence available from 17",
-    ],
+    bullets: ["Apply via GOV.UK", "Then book a CBT to ride a 125cc (up to 11kW)", "A1 licence available from 17"],
   },
   H: {
     id: "H",
     cta: "provisional",
     title: "Apply for your UK provisional licence",
     body: "At 19+ you'll need a UK provisional to start. After that, a CBT gets you on a 125cc, and you can progress to a full A2 licence (up to 35kW).",
-    bullets: [
-      "Apply via GOV.UK",
-      "Then book a CBT to start riding",
-      "A2 licence available — bikes up to 35kW",
-    ],
+    bullets: ["Apply via GOV.UK", "Then book a CBT to start riding", "A2 licence available — bikes up to 35kW"],
   },
   L: {
     id: "L",
     cta: "provisional",
     title: "Apply for your UK provisional licence",
     body: "At 24+ you can go straight to a full A licence with no power restrictions — but you'll need a provisional first, then a CBT to start training.",
-    bullets: [
-      "Apply via GOV.UK",
-      "Then book a CBT to start riding",
-      "Full A licence route available — any power",
-    ],
+    bullets: ["Apply via GOV.UK", "Then book a CBT to start riding", "Full A licence route available — any power"],
   },
 
   // --- Book CBT ---
@@ -393,17 +372,16 @@ function roadmapFor(age: AgeBand, aspirations: Aspirations): string[] {
   if (age === "16" && (wantsBigger || wantsPassenger || wantsMotorways)) {
     steps.push("At 17 you can CBT onto a 125cc and start working towards a full A1 licence.");
   }
-  if (
-    (age === "16" || age === "17-18") &&
-    (BIKE_RANK[aspirations.bikeSize] >= BIKE_RANK["midweight"])
-  ) {
+  if ((age === "16" || age === "17-18") && BIKE_RANK[aspirations.bikeSize] >= BIKE_RANK["midweight"]) {
     steps.push("From 19 you can take a full A2 licence — bikes up to 35kW.");
   }
   if (aspirations.bikeSize === "unrestricted" && age !== "24+") {
     steps.push("From 24 (or 2 years after passing A2) you can take a full A licence — any power, no restrictions.");
   }
   if ((wantsPassenger || wantsMotorways) && age !== "16") {
-    steps.push("Passing a full A1, A2 or A licence removes L-plates — you can then carry passengers and use motorways.");
+    steps.push(
+      "Passing a full A1, A2 or A licence removes L-plates — you can then carry passengers and use motorways.",
+    );
   }
   if (wantsPassenger && age === "16") {
     steps.push("Carrying passengers and using motorways needs a full licence — earliest at 17 with A1.");
@@ -423,11 +401,7 @@ type JourneyStage = {
   blockedBy?: string;
 };
 
-function journeyFor(
-  age: AgeBand,
-  licence: Licence,
-  aspirations: Aspirations | null,
-): JourneyStage[] {
+function journeyFor(age: AgeBand, licence: Licence, aspirations: Aspirations | null): JourneyStage[] {
   const stages: JourneyStage[] = [];
   const cap = eligibilityFor(age);
 
@@ -453,7 +427,8 @@ function journeyFor(
     stages.push({
       key: "licence",
       title: "Exchange your non-UK licence",
-      description: "You need to swap your overseas licence for a UK one before you can train. Check the rules for your country on GOV.UK.",
+      description:
+        "You need to swap your overseas licence for a UK one before you can train. Check the rules for your country on GOV.UK.",
       status: "now",
       icon: "licence",
     });
@@ -482,13 +457,10 @@ function journeyFor(
   });
 
   // --- Stage 3: Full licence tiers — only show what's relevant to aspirations ---
-  const wantsBigger =
-    aspirations &&
-    BIKE_RANK[aspirations.bikeSize] > BIKE_RANK[cap.maxBikeNow];
+  const wantsBigger = aspirations && BIKE_RANK[aspirations.bikeSize] > BIKE_RANK[cap.maxBikeNow];
   const wantsPassenger = aspirations?.passenger === "yes";
   const wantsMotorways = aspirations?.motorways === "yes";
-  const wantsFullLicence =
-    !aspirations || wantsBigger || wantsPassenger || wantsMotorways;
+  const wantsFullLicence = !aspirations || wantsBigger || wantsPassenger || wantsMotorways;
 
   if (wantsFullLicence) {
     const target = aspirations?.bikeSize ?? "midweight";
@@ -504,12 +476,12 @@ function journeyFor(
       blockedBy: hasUkEntitlement ? "Pass your CBT first" : "Get your UK provisional first",
     });
 
-
     if (age === "16") {
       stages.push({
         key: "a1",
         title: "Restricted A1 licence (from 17)",
-        description: "125cc / 14.8HP. No L-plates, passengers allowed, motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
+        description:
+          "125cc / 14.8HP. No L-plates, passengers allowed, motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Turn 17 and pass your CBT first",
@@ -518,7 +490,8 @@ function journeyFor(
       stages.push({
         key: "a1",
         title: "Restricted A1 licence",
-        description: "125cc / 14.8HP. No L-plates, passengers allowed, motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
+        description:
+          "125cc / 14.8HP. No L-plates, passengers allowed, motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Pass your CBT first",
@@ -527,7 +500,8 @@ function journeyFor(
         stages.push({
           key: "a2",
           title: "Restricted A2 licence (from 19)",
-          description: "Medium motorcycle — no engine cap, restricted to 47HP. No L-plates, passengers and motorways allowed.",
+          description:
+            "Medium motorcycle — no engine cap, restricted to 47HP. No L-plates, passengers and motorways allowed.",
           status: "locked",
           icon: "fullLicence",
           blockedBy: "Turn 19 and pass your CBT first",
@@ -537,7 +511,8 @@ function journeyFor(
       stages.push({
         key: "a2",
         title: "Restricted A2 licence",
-        description: "Medium motorcycle — no engine cap, restricted to 47HP. No L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
+        description:
+          "Medium motorcycle — no engine cap, restricted to 47HP. No L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Pass your CBT first",
@@ -546,7 +521,8 @@ function journeyFor(
         stages.push({
           key: "a",
           title: "Full A licence (from 24 direct, or 21 with 2 years on A2)",
-          description: "Any bike, any power — no restrictions on engine size or HP. No L-plates, passengers and motorways allowed.",
+          description:
+            "Any bike, any power — no restrictions on engine size or HP. No L-plates, passengers and motorways allowed.",
           status: "locked",
           icon: "fullLicence",
           blockedBy: "Turn 24, or hold A2 for 2 years (from 21)",
@@ -556,7 +532,8 @@ function journeyFor(
       stages.push({
         key: "a",
         title: "Full A licence (Direct Access)",
-        description: "Any bike, any power — no restrictions. No L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
+        description:
+          "Any bike, any power — no restrictions. No L-plates, passengers and motorways allowed. Needs motorcycle theory + Mod 1 + Mod 2.",
         status: "locked",
         icon: "fullLicence",
         blockedBy: "Pass your CBT first",
@@ -568,9 +545,28 @@ function journeyFor(
 }
 
 // Capture form sits between the licence question and the eligibility summary.
-type Stage = "intro" | "age" | "licence" | "capture" | "eligibility" | "bikeSize" | "passenger" | "motorways" | "result";
+type Stage =
+  | "intro"
+  | "age"
+  | "licence"
+  | "capture"
+  | "eligibility"
+  | "bikeSize"
+  | "passenger"
+  | "motorways"
+  | "result";
 
-const STAGE_ORDER: Stage[] = ["intro", "age", "licence", "capture", "eligibility", "bikeSize", "passenger", "motorways", "result"];
+const STAGE_ORDER: Stage[] = [
+  "intro",
+  "age",
+  "licence",
+  "capture",
+  "eligibility",
+  "bikeSize",
+  "passenger",
+  "motorways",
+  "result",
+];
 
 // --- HubSpot Forms API plumbing ---------------------------------------------
 
@@ -597,11 +593,7 @@ async function submitToHubspot(fields: HsField[]): Promise<void> {
   }
 }
 
-async function submitCaptureToHubspot(
-  values: { email: string },
-  age: AgeBand,
-  licence: Licence,
-): Promise<void> {
+async function submitCaptureToHubspot(values: { email: string }, age: AgeBand, licence: Licence): Promise<void> {
   await submitToHubspot([
     { name: "email", value: values.email },
     { name: "getting_started_age_bracket", value: age },
@@ -619,12 +611,9 @@ async function submitPersonalisationToHubspot(
   },
 ): Promise<void> {
   const fields: HsField[] = [{ name: "email", value: email }];
-  if (answers.bikeSize)
-    fields.push({ name: "getting_started_bike_size_want", value: answers.bikeSize });
-  if (answers.passenger)
-    fields.push({ name: "getting_started_passengers_need", value: answers.passenger });
-  if (answers.motorways)
-    fields.push({ name: "getting_started_motorways", value: answers.motorways });
+  if (answers.bikeSize) fields.push({ name: "getting_started_bike_size_want", value: answers.bikeSize });
+  if (answers.passenger) fields.push({ name: "getting_started_passengers_need", value: answers.passenger });
+  if (answers.motorways) fields.push({ name: "getting_started_motorways", value: answers.motorways });
   // Only fire if we have something to update beyond the email.
   if (fields.length > 1) {
     await submitToHubspot(fields);
@@ -641,11 +630,7 @@ type CourseFinderProps = {
   hideTrigger?: boolean;
 };
 
-export function CourseFinder({
-  open: controlledOpen,
-  onOpenChange,
-  hideTrigger = false,
-}: CourseFinderProps = {}) {
+export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger = false }: CourseFinderProps = {}) {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -722,18 +707,17 @@ export function CourseFinder({
     setStage("result");
   };
 
-  const ending: Ending | null =
-    age && licence ? ENDINGS[ENDING_MAP[`${age}|${licence}`]] : null;
+  const ending: Ending | null = age && licence ? ENDINGS[ENDING_MAP[`${age}|${licence}`]] : null;
 
   // Outcome CTA — closes the dialog, and for provisional/convert also
   // opens the relevant GOV.UK page in a new tab.
   const handleCtaClick = () => {
     if (!ending) return;
     const url = CTA_URL[ending.cta];
+    setOpen(false);
     if (url && typeof window !== "undefined") {
       window.open(url, "_blank", "noopener,noreferrer");
     }
-    setOpen(false);
   };
 
   const progress = ((STAGE_ORDER.indexOf(stage) + 1) / STAGE_ORDER.length) * 100;
@@ -741,29 +725,25 @@ export function CourseFinder({
   const eligibility = age ? eligibilityFor(age) : null;
 
   const aspirations: Aspirations | null =
-    bikeSize && passenger && motorways
-      ? { bikeSize, passenger, motorways }
-      : null;
+    bikeSize && passenger && motorways ? { bikeSize, passenger, motorways } : null;
 
-  const roadmap =
-    age && aspirations ? roadmapFor(age, aspirations) : [];
+  const roadmap = age && aspirations ? roadmapFor(age, aspirations) : [];
 
-  const journey =
-    age && licence ? journeyFor(age, licence, aspirations) : [];
+  const journey = age && licence ? journeyFor(age, licence, aspirations) : [];
 
   // Module labels shown above the question
   const moduleLabel =
     stage === "intro"
       ? "Licence Finder"
       : stage === "age" || stage === "licence"
-      ? "Step 1 of 2 · Eligibility"
-      : stage === "capture"
-      ? "Almost there"
-      : stage === "eligibility"
-      ? "Eligibility check"
-      : stage === "bikeSize" || stage === "passenger" || stage === "motorways"
-      ? "Step 2 of 2 · What you want"
-      : "Your recommendation";
+        ? "Step 1 of 2 · Eligibility"
+        : stage === "capture"
+          ? "Almost there"
+          : stage === "eligibility"
+            ? "Eligibility check"
+            : stage === "bikeSize" || stage === "passenger" || stage === "motorways"
+              ? "Step 2 of 2 · What you want"
+              : "Your recommendation";
 
   return (
     <Dialog
@@ -783,148 +763,142 @@ export function CourseFinder({
       )}
       <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0">
         <div className="overflow-y-auto px-6 py-6">
-        <DialogHeader className="sr-only">
-          <DialogTitle>Licence Finder</DialogTitle>
-          <DialogDescription>
-            A few quick questions and we'll point you to the right training.
-          </DialogDescription>
-        </DialogHeader>
+          <DialogHeader className="sr-only">
+            <DialogTitle>Licence Finder</DialogTitle>
+            <DialogDescription>A few quick questions and we'll point you to the right training.</DialogDescription>
+          </DialogHeader>
 
-        <div className="mt-1 space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
-            {moduleLabel}
-          </p>
-          {stage !== "intro" && <Progress value={progress} className="h-1.5" />}
-        </div>
-
-        {stage === "intro" && (
-          <div className="mt-6 flex flex-col items-start text-left">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              What training do I need?
-            </h2>
-            <p className="mt-3 text-base text-muted-foreground">
-              A few quick questions and we'll match you to the right training.
-            </p>
-            <Button
-              size="lg"
-              className="mt-6 gap-2"
-              onClick={() => setStage("age")}
+          <div className="mt-1 space-y-2">
+            <p
+              className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+              style={{ fontFamily: "var(--font-body)" }}
             >
-              <Sparkles className="size-4" />
-              Get started
-            </Button>
+              {moduleLabel}
+            </p>
+            {stage !== "intro" && <Progress value={progress} className="h-1.5" />}
           </div>
-        )}
 
-        {stage === "age" && (
-          <QuestionPanel
-            question="How old are you?"
-            help="Age sets the highest licence you can work towards — you'll still need a CBT (and motorcycle theory for a full A1/A2/A licence) to actually get there."
-            options={AGE_OPTIONS.map((o) => ({
-              key: o.value,
-              label: o.label,
-              help: o.help,
-              onSelect: () => handleAge(o.value),
-            }))}
-          />
-        )}
+          {stage === "intro" && (
+            <div className="mt-6 flex flex-col items-start text-left">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">What training do I need?</h2>
+              <p className="mt-3 text-base text-muted-foreground">
+                A few quick questions and we'll match you to the right training.
+              </p>
+              <Button size="lg" className="mt-6 gap-2" onClick={() => setStage("age")}>
+                <Sparkles className="size-4" />
+                Get started
+              </Button>
+            </div>
+          )}
 
-        {stage === "licence" && age && (
-          <QuestionPanel
-            question="What driving licence do you currently hold?"
-            help="We mean a car driving licence (UK or overseas) — pick whichever best describes you today."
-            options={LICENCE_OPTIONS[age].map((o) => ({
-              key: o.value,
-              label: o.label,
-              help: o.help,
-              onSelect: () => handleLicence(o.value),
-            }))}
-            onBack={back}
-            onReset={reset}
-          />
-        )}
+          {stage === "age" && (
+            <QuestionPanel
+              question="How old are you?"
+              help="Age sets the highest licence you can work towards — you'll still need a CBT (and motorcycle theory for a full A1/A2/A licence) to actually get there."
+              options={AGE_OPTIONS.map((o) => ({
+                key: o.value,
+                label: o.label,
+                help: o.help,
+                onSelect: () => handleAge(o.value),
+              }))}
+            />
+          )}
 
-        {stage === "capture" && age && licence && (
-          <LeadCapturePanel
-            age={age}
-            licence={licence}
-            onSubmitted={(values) => {
-              setContact(values);
-              setStage("eligibility");
-            }}
-            onBack={back}
-            onReset={reset}
-          />
-        )}
+          {stage === "licence" && age && (
+            <QuestionPanel
+              question="What driving licence do you currently hold?"
+              help="We mean a car driving licence (UK or overseas) — pick whichever best describes you today."
+              options={LICENCE_OPTIONS[age].map((o) => ({
+                key: o.value,
+                label: o.label,
+                help: o.help,
+                onSelect: () => handleLicence(o.value),
+              }))}
+              onBack={back}
+              onReset={reset}
+            />
+          )}
 
-        {stage === "eligibility" && eligibility && ending && (
-          <EligibilityPanel
-            eligibility={eligibility}
-            ending={ending}
-            onContinue={() => setStage("bikeSize")}
-            onSkip={skipAspirations}
-            onCtaClick={handleCtaClick}
-            onBack={back}
-            onReset={reset}
-          />
-        )}
+          {stage === "capture" && age && licence && (
+            <LeadCapturePanel
+              age={age}
+              licence={licence}
+              onSubmitted={(values) => {
+                setContact(values);
+                setStage("eligibility");
+              }}
+              onBack={back}
+              onReset={reset}
+            />
+          )}
 
-        {stage === "bikeSize" && (
-          <QuestionPanel
-            question="What kind of bike do you actually want to ride?"
-            help="Pick your aspiration — we'll tell you if you can do it now, or what the path looks like."
-            options={BIKE_SIZE_OPTIONS.map((o) => ({
-              key: o.value,
-              label: o.label,
-              help: o.help,
-              onSelect: () => handleBikeSize(o.value),
-            }))}
-            onBack={back}
-            onReset={reset}
-          />
-        )}
+          {stage === "eligibility" && eligibility && ending && (
+            <EligibilityPanel
+              eligibility={eligibility}
+              ending={ending}
+              onContinue={() => setStage("bikeSize")}
+              onSkip={skipAspirations}
+              onCtaClick={handleCtaClick}
+              onBack={back}
+              onReset={reset}
+            />
+          )}
 
-        {stage === "passenger" && (
-          <QuestionPanel
-            question="Will you ever need to carry a passenger on your bike?"
-            help="Not all licence types allow you to have a pillion."
-            options={YES_NO_UNSURE.map((o) => ({
-              key: o.value,
-              label: o.label,
-              onSelect: () => handlePassenger(o.value),
-            }))}
-            onBack={back}
-            onReset={reset}
-          />
-        )}
+          {stage === "bikeSize" && (
+            <QuestionPanel
+              question="What kind of bike do you actually want to ride?"
+              help="Pick your aspiration — we'll tell you if you can do it now, or what the path looks like."
+              options={BIKE_SIZE_OPTIONS.map((o) => ({
+                key: o.value,
+                label: o.label,
+                help: o.help,
+                onSelect: () => handleBikeSize(o.value),
+              }))}
+              onBack={back}
+              onReset={reset}
+            />
+          )}
 
-        {stage === "motorways" && (
-          <QuestionPanel
-            question="Do you want to ride on motorways?"
-            help="Motorways are often the quickest route somewhere, but not all licence types allow you to ride on them."
-            options={YES_NO_UNSURE.map((o) => ({
-              key: o.value,
-              label: o.label,
-              onSelect: () => handleMotorways(o.value),
-            }))}
-            onBack={back}
-            onReset={reset}
-          />
-        )}
+          {stage === "passenger" && (
+            <QuestionPanel
+              question="Will you ever need to carry a passenger on your bike?"
+              help="Not all licence types allow you to have a pillion."
+              options={YES_NO_UNSURE.map((o) => ({
+                key: o.value,
+                label: o.label,
+                onSelect: () => handlePassenger(o.value),
+              }))}
+              onBack={back}
+              onReset={reset}
+            />
+          )}
 
+          {stage === "motorways" && (
+            <QuestionPanel
+              question="Do you want to ride on motorways?"
+              help="Motorways are often the quickest route somewhere, but not all licence types allow you to ride on them."
+              options={YES_NO_UNSURE.map((o) => ({
+                key: o.value,
+                label: o.label,
+                onSelect: () => handleMotorways(o.value),
+              }))}
+              onBack={back}
+              onReset={reset}
+            />
+          )}
 
-        {stage === "result" && ending && eligibility && (
-          <ResultPanel
-            ending={ending}
-            aspirations={aspirations}
-            eligibility={eligibility}
-            roadmap={roadmap}
-            journey={journey}
-            onCtaClick={handleCtaClick}
-            onBack={back}
-            onReset={reset}
-          />
-        )}
+          {stage === "result" && ending && eligibility && (
+            <ResultPanel
+              ending={ending}
+              aspirations={aspirations}
+              eligibility={eligibility}
+              roadmap={roadmap}
+              journey={journey}
+              onCtaClick={handleCtaClick}
+              onBack={back}
+              onReset={reset}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>
@@ -968,7 +942,10 @@ function QuestionPanel({
             <span className="flex flex-col">
               <span className="text-sm font-medium">{opt.label}</span>
               {opt.help && (
-                <span className="mt-0.5 text-xs font-normal normal-case tracking-normal text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+                <span
+                  className="mt-0.5 text-xs font-normal normal-case tracking-normal text-muted-foreground"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
                   {opt.help}
                 </span>
               )}
@@ -991,10 +968,7 @@ function QuestionPanel({
             <span />
           )}
           {onReset && (
-            <button
-              onClick={onReset}
-              className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-            >
+            <button onClick={onReset} className="text-xs text-muted-foreground underline-offset-4 hover:underline">
               Start over
             </button>
           )}
@@ -1047,52 +1021,25 @@ function LeadCapturePanel({
   return (
     <form onSubmit={onSubmit} className="mt-4 space-y-4">
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold text-foreground">
-          Where should we send your recommendation?
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          We'll save your answers so you can pick up where you left off.
-        </p>
+        <h2 className="text-lg font-semibold text-foreground">Where should we send your recommendation?</h2>
+        <p className="text-sm text-muted-foreground">We'll save your answers so you can pick up where you left off.</p>
       </div>
 
       <div className="space-y-3">
-
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            disabled={isSubmitting}
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-xs text-destructive">{errors.email.message}</p>
-          )}
+          <Input id="email" type="email" autoComplete="email" disabled={isSubmitting} {...register("email")} />
+          {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-3 pt-2">
         <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-            disabled={isSubmitting}
-            className="gap-1"
-          >
+          <Button type="button" variant="ghost" size="sm" onClick={onBack} disabled={isSubmitting} className="gap-1">
             <ArrowLeft className="size-4" />
             Back
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onReset}
-            disabled={isSubmitting}
-            className="gap-1"
-          >
+          <Button type="button" variant="ghost" size="sm" onClick={onReset} disabled={isSubmitting} className="gap-1">
             <RotateCcw className="size-4" />
             Start again
           </Button>
@@ -1127,9 +1074,7 @@ function EligibilityPanel({
 }) {
   const isBlocked = ending.cta !== "cbt";
   const blockerHeading =
-    ending.cta === "provisional"
-      ? "You'll need a UK provisional first"
-      : "Your non-UK licence won't cover you here";
+    ending.cta === "provisional" ? "You'll need a UK provisional first" : "Your non-UK licence won't cover you here";
   const blockerIntro =
     ending.cta === "provisional"
       ? "We can't book you onto any motorcycle training until you hold a UK provisional driving licence."
@@ -1151,12 +1096,8 @@ function EligibilityPanel({
             <AlertTriangle className="size-4 shrink-0" />
             Before you can book
           </p>
-          <p className="mt-1 text-sm font-semibold leading-snug text-destructive">
-            {blockerHeading}
-          </p>
-          <p className="mt-1 text-sm leading-relaxed text-foreground/80">
-            {blockerIntro}
-          </p>
+          <p className="mt-1 text-sm font-semibold leading-snug text-destructive">{blockerHeading}</p>
+          <p className="mt-1 text-sm leading-relaxed text-foreground/80">{blockerIntro}</p>
           {blockerSteps.length > 0 && (
             <ul className="mt-2 space-y-1 text-sm leading-relaxed text-foreground/80">
               {blockerSteps.map((step) => (
@@ -1179,44 +1120,48 @@ function EligibilityPanel({
       )}
 
       {ending.cta !== "convert" && (
-      <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-5 shadow-sm">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="size-5 shrink-0 text-primary" />
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            {isBlocked ? "Here's what you could book" : "Here's what you can do"}
+        <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-5 shadow-sm">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="size-5 shrink-0 text-primary" />
+            <p className="text-sm font-semibold uppercase tracking-wide text-primary">
+              {isBlocked ? "Here's what you could book" : "Here's what you can do"}
+            </p>
+          </div>
+          <p className="mt-2 text-base leading-relaxed">
+            {ending.cta === "cbt" ? (
+              <>
+                You're in the right place — <strong>you're ready to book your CBT</strong>. Finish your booking to ride
+                up to a 125cc.
+              </>
+            ) : (
+              eligibility.summary
+            )}
           </p>
+          <div className="mt-4">
+            {ending.cta === "cbt" ? (
+              <Button onClick={onCtaClick} className="w-full sm:w-auto">
+                Continue with booking
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
+                Apply for provisional
+                <ArrowUpRight className="size-4" />
+              </Button>
+            )}
+          </div>
         </div>
-        <p className="mt-2 text-base leading-relaxed">
-          {ending.cta === "cbt" ? (
-            <>
-              You're in the right place — <strong>you're ready to book your CBT</strong>. Finish your booking to ride up to a 125cc.
-            </>
-          ) : (
-            eligibility.summary
-          )}
-        </p>
-        <div className="mt-4">
-          {ending.cta === "cbt" ? (
-            <Button onClick={onCtaClick} className="w-full sm:w-auto">
-              Continue with booking
-            </Button>
-          ) : (
-            <Button variant="outline" onClick={onCtaClick} className="w-full gap-2 sm:w-auto">
-              Apply for provisional
-              <ArrowUpRight className="size-4" />
-            </Button>
-          )}
-        </div>
-      </div>
       )}
 
-
       <div className="rounded-lg border border-border bg-card p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+        <p
+          className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
           Want a fully refined plan?
         </p>
         <p className="mt-1 text-sm text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
-          Three more questions about the bike you actually want to ride and we'll match you to the right course — and show you the roadmap if you're aiming higher than your age allows today.
+          Three more questions about the bike you actually want to ride and we'll match you to the right course — and
+          show you the roadmap if you're aiming higher than your age allows today.
         </p>
         <div className="mt-3">
           <Button
@@ -1230,17 +1175,12 @@ function EligibilityPanel({
         </div>
       </div>
 
-
-
       <div className="flex items-center justify-between pt-2">
         <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
           <ArrowLeft className="size-4" />
           Back
         </Button>
-        <button
-          onClick={onReset}
-          className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-        >
+        <button onClick={onReset} className="text-xs text-muted-foreground underline-offset-4 hover:underline">
           Start over
         </button>
       </div>
@@ -1267,9 +1207,7 @@ function ResultPanel({
   onBack: () => void;
   onReset: () => void;
 }) {
-  const wantsBigger =
-    aspirations &&
-    BIKE_RANK[aspirations.bikeSize] > BIKE_RANK[eligibility.maxBikeNow];
+  const wantsBigger = aspirations && BIKE_RANK[aspirations.bikeSize] > BIKE_RANK[eligibility.maxBikeNow];
   const wantsPassenger = aspirations?.passenger === "yes";
   const wantsMotorways = aspirations?.motorways === "yes";
   const hasGap = roadmap.length > 0 && (wantsBigger || wantsPassenger || wantsMotorways);
@@ -1287,8 +1225,8 @@ function ResultPanel({
               <p className="mt-1 text-sm" style={{ fontFamily: "var(--font-body)" }}>
                 You want a {BIKE_LABEL[aspirations.bikeSize]}
                 {wantsPassenger ? ", with a passenger" : ""}
-                {wantsMotorways ? ", on motorways" : ""}.
-                Right now you're capped at a {BIKE_LABEL[eligibility.maxBikeNow]} on L-plates.
+                {wantsMotorways ? ", on motorways" : ""}. Right now you're capped at a{" "}
+                {BIKE_LABEL[eligibility.maxBikeNow]} on L-plates.
               </p>
             </div>
           </div>
@@ -1299,9 +1237,7 @@ function ResultPanel({
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex items-center gap-2">
             <MapPin className="size-4 text-secondary" />
-            <p className="text-xs font-semibold uppercase tracking-wide text-secondary">
-              Your journey, step by step
-            </p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-secondary">Your journey, step by step</p>
           </div>
           <JourneyStages stages={journey} />
         </div>
@@ -1345,8 +1281,8 @@ function JourneyStages({ stages }: { stages: JourneyStage[] }) {
         const containerClasses = isNow
           ? "border-primary/40 bg-primary/5"
           : isDone
-          ? "border-border bg-muted/40"
-          : "border-dashed border-border bg-background opacity-75";
+            ? "border-border bg-muted/40"
+            : "border-dashed border-border bg-background opacity-75";
 
         const badge = isDone ? (
           <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
@@ -1363,15 +1299,24 @@ function JourneyStages({ stages }: { stages: JourneyStage[] }) {
         );
 
         const statusPill = isDone ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary" style={{ fontFamily: "var(--font-body)" }}>
+          <span
+            className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
             <CheckCircle2 className="size-3" /> Done
           </span>
         ) : isNow ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground" style={{ fontFamily: "var(--font-body)" }}>
+          <span
+            className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
             <Circle className="size-2 fill-current" /> Do this now
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+          <span
+            className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
             <Lock className="size-3" /> Locked
           </span>
         );
@@ -1396,11 +1341,17 @@ function JourneyStages({ stages }: { stages: JourneyStage[] }) {
                   </h4>
                   {statusPill}
                 </div>
-                <p className={`mt-1 text-xs leading-relaxed ${isLocked ? "text-muted-foreground" : "text-foreground/80"}`} style={{ fontFamily: "var(--font-body)" }}>
+                <p
+                  className={`mt-1 text-xs leading-relaxed ${isLocked ? "text-muted-foreground" : "text-foreground/80"}`}
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
                   {s.description}
                 </p>
                 {isLocked && s.blockedBy && (
-                  <p className="mt-1.5 text-[11px] font-medium text-muted-foreground" style={{ fontFamily: "var(--font-body)" }}>
+                  <p
+                    className="mt-1.5 text-[11px] font-medium text-muted-foreground"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
                     🔒 Unlocks after: {s.blockedBy}
                   </p>
                 )}
