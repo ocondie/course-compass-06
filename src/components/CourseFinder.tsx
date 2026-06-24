@@ -633,7 +633,7 @@ async function submitCaptureToHubspot(values: { email: string }, age: AgeBand, l
   await submitToHubspot([
     { name: "email", value: values.email },
     { name: "getting_started_age_bracket", value: AGE_TO_HS[age] },
-    { name: "current_licences", value: LICENCE_TO_HS[licence] },
+    { name: "current_licence", value: LICENCE_TO_HS[licence] },
     { name: "getting_started_new_pop_up_filler", value: "true" },
   ]);
 }
