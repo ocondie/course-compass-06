@@ -41,6 +41,22 @@ function EmbedPage() {
           display: none !important;
           background: transparent !important;
         }
+        [data-rideto-embed] [role="dialog"][data-state] {
+          inset: 0 !important;
+          left: 0 !important;
+          top: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          max-width: 100vw !important;
+          max-height: 100vh !important;
+          margin: 0 !important;
+          transform: none !important;
+          translate: none !important;
+          scale: none !important;
+          animation: none !important;
+          transition: none !important;
+          border-radius: 0 !important;
+        }
       `}</style>
       <CourseFinder open={open} onOpenChange={setOpen} hideTrigger embed />
     </main>

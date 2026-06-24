@@ -803,7 +803,24 @@ export function CourseFinder({ open: controlledOpen, onOpenChange, hideTrigger =
       )}
       <DialogContent
         className={embed ? "overflow-hidden flex flex-col p-0 border-0 rounded-none shadow-none max-w-none" : "sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col p-0"}
-        style={embed ? { left: 0, top: 0, width: "100vw", height: "100vh", maxWidth: "100vw", maxHeight: "100vh", transform: "none" } : undefined}
+        style={embed ? {
+          position: "fixed",
+          inset: 0,
+          left: 0,
+          top: 0,
+          width: "100vw",
+          height: "100vh",
+          minHeight: "100vh",
+          maxWidth: "100vw",
+          maxHeight: "100vh",
+          margin: 0,
+          transform: "none",
+          translate: "none",
+          scale: "none",
+          animation: "none",
+          transition: "none",
+          borderRadius: 0,
+        } : undefined}
       >
 
         <div className="overflow-y-auto px-6 py-6">
