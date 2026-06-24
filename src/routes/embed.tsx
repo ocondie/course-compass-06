@@ -57,6 +57,10 @@ function EmbedPage() {
           transition: none !important;
           border-radius: 0 !important;
         }
+        /* Hide Radix's default close button in embed mode — the host page provides one. */
+        [data-rideto-embed] [role="dialog"] > button[type="button"] {
+          display: none !important;
+        }
       `}</style>
       <CourseFinder open={open} onOpenChange={setOpen} hideTrigger embed />
     </main>
